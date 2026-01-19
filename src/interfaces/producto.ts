@@ -2,10 +2,19 @@ export interface Producto {
     id:          string;
     name:        string;
     imagen:      null;
-    sizes:       SizeTag[];
-    category:         null;
+    sizes:       Size[];
+    category:    string;
     descripcion: string;
     estatus:     boolean;
-    price:       number;
 }
-export type SizeTag = 'Chica' | 'Mediana' | 'Grande' | 'Familiar' | 'Mini' | 'Default'
+export type SizeTag = 'Chica' | 'Mediana' | 'Grande' | 'Familiar' | 'Mini' | 'Por defecto';
+
+export interface Size{
+    size: SizeTag,
+    price:number
+}
+
+export interface Category{
+    descripcion: string,
+    id: string,
+}

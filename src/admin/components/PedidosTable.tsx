@@ -3,7 +3,7 @@ import { TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from "@
 import { formatCurrency } from "@/lib/format-currency";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { useNavigate } from "react-router";
-import { CustomStatusBadge } from "./CustomEstatusBadge";
+import { CustomStatusBadge } from "./CustomStatusBadge";
 import { formatDateTime } from "@/lib/format-date";
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import type { Pedido } from "@/interfaces/pedidos-response";

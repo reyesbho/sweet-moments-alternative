@@ -1,17 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search} from "lucide-react";
-import { useState } from "react";
+import { Search } from "lucide-react";
+import { useRef, useState } from "react";
 import { CustomProductCard } from "./CustomProductCard";
 import { useProductos } from "../hook/useProductos";
 import type { Producto } from "@/interfaces/producto";
+import { useCategories } from "../hook/useCategories";
+
+interface Props {
+    handleSelecProduct: (produc: Producto) => void
+}
+
+export const CustomProductSelector = ({ handleSelecProduct }: Props) => {
+    const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
+    const [searchTerm, setSearchTerm] = useState<string | undefined>();
+    const { data: categories } = useCategories();
+    const refInputSearch = useRef<HTMLInputElement>(null);
+    const { data: productos } = useProductos({ category: selectedCategory, name: searchTerm });
 
 
-export const CustomProductSelector = () => {
-    const categories: string[] = [];
-    const [selectedCategory, setSelectedCategory] = useState<string>();
-    const {data} = useProductos();
-    const [filteredProducts, setFilteredProducts] = useState<Producto[]>();
     return (
         <div className="space-y-4">
             {/* Search */}
@@ -19,44 +26,45 @@ export const CustomProductSelector = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                     placeholder="Buscar productos..."
-                    // value={searchTerm}
-                    // onChange={(e) => setSearchTerm(e.target.value)}
+                    ref={refInputSearch}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
                 />
             </div>
 
             {/* Category Pills */}
             <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
+                <Button
+                    type="button"
+                    variant={!selectedCategory ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(undefined)}
+                    className="capitalize"
+                >
+                    Todos
+                </Button>
+                {categories && categories.map((category) => (
                     <Button
-                        key={category}
+                        key={category.descripcion}
                         type="button"
-                        variant={selectedCategory === category ? "default" : "outline"}
+                        variant={selectedCategory === category.descripcion ? "default" : "outline"}
                         size="sm"
-                        onClick={() => setSelectedCategory(category)}
+                        onClick={() => setSelectedCategory(category.descripcion)}
                         className="capitalize"
                     >
-                        {category}
+                        {category.descripcion}
                     </Button>
                 ))}
             </div>
 
             {/* Products Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[420px] overflow-y-auto pr-1">
-                {data?.map((product) => {
-                    // const selected = isSelected(product.id);
+                {productos?.map((product) => {
                     return (
-                        <CustomProductCard key={product.id} producto={product} selected></CustomProductCard>
+                        <CustomProductCard onSelect={handleSelecProduct} key={product.id} producto={product}></CustomProductCard>
                     );
                 })}
             </div>
-
-            {filteredProducts?.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                    <p>No se encontraron productos</p>
-                    <p className="text-sm mt-1">Intenta con otra búsqueda o categoría</p>
-                </div>
-            )}
         </div>
     )
 }

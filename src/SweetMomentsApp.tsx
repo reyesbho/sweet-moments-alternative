@@ -17,7 +17,7 @@ export const SweetMomentsApp = () => {
       queryFn: checkAuthStatus,
       retry: false,
       refetchInterval: 1000 * 60 * 60,
-      refetchOnWindowFocus: true
+      refetchOnWindowFocus: false
     })
 
     if(isLoading){

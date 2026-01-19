@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/format-currency";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, CalendarIcon, ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
+import { CalendarIcon, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useForm } from 'react-hook-form'
 import type { Pedido, ProductoPedido } from "@/interfaces/pedidos-response";
@@ -12,11 +12,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CustomProductBagde } from "@/admin/components/CustomProductBagde";
-import { useProductos } from "@/admin/hook/useProductos";
 import { CustomProductSelector } from "@/admin/components/CustomProductSelector";
 import CustomJumbotron from "@/admin/components/CustomJumbotron";
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import type { Producto } from "@/interfaces/producto";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { ProductConfigModal } from "@/admin/components/ProductConfigModal";
+import { getTasksProductoPedidoInitialState, tasksProductosPedidosReducer } from "@/admin/hook/reducer/tasksProductosPedido";
 
 interface Props {
   title: string,
@@ -26,17 +29,40 @@ interface Props {
   onSubmit: (pedidoLike: Partial<Pedido>) => Promise<void>
 }
 
-
+interface InputsForm extends Pedido {
+  selectedDate: Date,
+  selecHour: string,
+}
 const PedidoPage = ({ title, subtitle, pedido, isPending, onSubmit }: Props) => {
-  const [productsSelected, setProductsSelected] = useState<Producto[]>([])
-  const { register, handleSubmit, formState: { errors }, getValues, setValue, watch } = useForm<Pedido>({
+  const [state, dispatch] = useReducer(tasksProductosPedidosReducer, getTasksProductoPedidoInitialState());
+
+
+  const [selectedDate, setSeletedDate] = useState(new Date());
+  const navigate = useNavigate();
+  const [selectedProduct, setSelectedProduct] = useState<Producto | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { register, handleSubmit, formState: { errors }, getValues, setValue, watch } = useForm<InputsForm>({
     defaultValues: pedido
   });
-  const { data } = useProductos();
-  const navigate = useNavigate();
+
+  const handleCalendar = (date: Date) => {
+    console.log(date)
+  }
+
+  const handleConfirmProduct = (productoPedido: ProductoPedido) => {
+    if (!selectedProduct) return;
+    dispatch({ type: 'ADD_PRODUCTO', payload: productoPedido })
+  }
+
+
+  const handleSelectProduct = (product: Producto) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <CustomJumbotron title="Nuevo Pedido" subtitle="Generar" ></CustomJumbotron>
+      <CustomJumbotron title="Nuevo Pedido" subtitle="Registrar un nuevo pedido" ></CustomJumbotron>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -57,12 +83,13 @@ const PedidoPage = ({ title, subtitle, pedido, isPending, onSubmit }: Props) => 
                     placeholder="Nombre completo"
                     required
                   />
+                  {errors.cliente && <p className='text-red-500'>Nombre requerido</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="deliveryAddress">Dirección de entrega</Label>
                   <Input
                     id="deliveryAddress"
-                    {...register('lugarEntrega', { required: true })}
+                    {...register('lugarEntrega')}
                     className={cn({ 'border-red-500': errors.lugarEntrega })}
                     placeholder="Calle, número, colonia"
                   />
@@ -84,19 +111,19 @@ const PedidoPage = ({ title, subtitle, pedido, isPending, onSubmit }: Props) => 
                         variant="outline"
                         className={cn(
                           'w-full justify-start text-left font-normal',
-                          // !deliveryDate && 'text-muted-foreground'
+                          !selectedDate && 'text-muted-foreground'
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {/* {deliveryDate ? format(deliveryDate, 'PPP', { locale: es }) : 'Seleccionar fecha'} */}
+                        {selectedDate ? format(selectedDate, 'PPP', { locale: es }) : 'Seleccionar fecha'}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        // selected={deliveryDate}
-                        // onSelect={setDeliveryDate}
-                        initialFocus
+                        selected={selectedDate}
+                        onSelect={handleCalendar}
+                        required
                         className="pointer-events-auto"
                       />
                     </PopoverContent>
@@ -107,8 +134,7 @@ const PedidoPage = ({ title, subtitle, pedido, isPending, onSubmit }: Props) => 
                   <Input
                     id="deliveryTime"
                     type="time"
-                    // value={formData.deliveryTime}
-                    // onChange={(e) => setFormData({ ...formData, deliveryTime: e.target.value })}
+                    {...register('selecHour')}
                     required
                   />
                 </div>
@@ -125,26 +151,23 @@ const PedidoPage = ({ title, subtitle, pedido, isPending, onSubmit }: Props) => 
                   <Label htmlFor="notes">Notas del pedido</Label>
                   <Textarea
                     id="notes"
-                    // value={formData.notes}
-                    // onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    {...register('detalles')}
                     placeholder="Instrucciones especiales, detalles del evento..."
                     rows={4}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Estado</Label>
-                  <Select
-                    // value={formData.status}
-                    // onValueChange={(value) => setFormData({ ...formData, status: value as OrderStatus })}
+                  <Select defaultValue="TODO"
                     {...register('estatus', { required: true })}
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Selecciona un estado" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="por-hacer">Por Hacer</SelectItem>
-                      <SelectItem value="entregado">Entregado</SelectItem>
-                      <SelectItem value="cancelado">Cancelado</SelectItem>
+                      <SelectItem value="TODO" >Por Hacer</SelectItem>
+                      <SelectItem value="DONE">Entregado</SelectItem>
+                      <SelectItem value="CANCELED">Cancelado</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -158,12 +181,16 @@ const PedidoPage = ({ title, subtitle, pedido, isPending, onSubmit }: Props) => 
                 Resumen del Pedido
               </h2>
 
-              {productsSelected.length > 0 ? (
+              {state.productos.length > 0 ? (
                 <div className="space-y-3">
-                  {productsSelected.map((item, index) => {
-                    const product = { producto: item } as ProductoPedido;
+                  {state.productos.map((item, index) => {
                     return (
-                      <CustomProductBagde key={index} productoPedido={product}></CustomProductBagde>
+                      <CustomProductBagde
+                        key={index} productoPedido={item}
+                        onRemove={() => dispatch({ type: 'REMOVE_PRODUCTO', payload: item.id })}
+                        onIncreaseQuantity={() => dispatch({ type: 'INCREASE_QUANTITY', payload: item.id })}
+                        onDecreaseQuantity={() => dispatch({ type: 'DECREASE_QUEANTITY', payload: item.id })}
+                      ></CustomProductBagde>
                     );
                   })}
 
@@ -171,7 +198,7 @@ const PedidoPage = ({ title, subtitle, pedido, isPending, onSubmit }: Props) => 
                   <div className="flex justify-between items-center pt-3 border-t">
                     <span className="text-lg font-semibold">Total:</span>
                     <span className="text-2xl font-bold text-primary">
-                      {/* {formatCurrency(pedido.total || 0)} */}
+                      {formatCurrency(state.total)}
                     </span>
                   </div>
                 </div>
@@ -194,10 +221,7 @@ const PedidoPage = ({ title, subtitle, pedido, isPending, onSubmit }: Props) => 
               <p className="text-sm text-muted-foreground mb-4">
                 Haz clic en un producto para agregarlo al pedido
               </p>
-              <CustomProductSelector
-              // products={availableProducts}
-              // selectedProductIds={items.map(item => item.productId)}
-              // onSelectProduct={handleSelectProduct}
+              <CustomProductSelector handleSelecProduct={handleSelectProduct}
               />
             </div>
           </div>
@@ -213,12 +237,23 @@ const PedidoPage = ({ title, subtitle, pedido, isPending, onSubmit }: Props) => 
             className="gradient-primary text-primary-foreground"
             disabled={isPending}
           >
-            'Guardar Cambios'
+            Guardar Cambios
           </Button>
         </div>
       </form>
+      {selectedProduct &&
+        <ProductConfigModal
+          productoPedido={{ producto: selectedProduct }}
+          open={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedProduct(null);
+          }}
+          onConfirm={handleConfirmProduct}
+        />
+      }
     </div>
   )
 }
 
-export default PedidoPage
+export default PedidoPage;

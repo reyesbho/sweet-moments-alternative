@@ -1,4 +1,4 @@
-import type { Producto } from "./producto";
+import type { Producto, Size } from "./producto";
 
 export interface PedidosResponse {
     pedidos: Pedido[],
@@ -20,6 +20,8 @@ export interface Pedido {
     fechaCreacion: Fecha;
     lugarEntrega:  string;
     productos:     ProductoPedido[];
+    detalles: string,
+    abonado?:number
 }
 
 export interface Fecha {
@@ -28,11 +30,11 @@ export interface Fecha {
 }
 
 export interface ProductoPedido {
-    caracteristicas: string[];
+    caracteristicas: string;
     producto:        Producto;
-    precio:          number;
+    subtotal:          number;
     cantidad:        number;
-    size:            string;
+    size:            Size;
     id:              string;
 }
 

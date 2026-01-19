@@ -9,15 +9,15 @@ interface StatusBadgeProps {
 }
 
 const statusConfig: Record<EstatusPedido, { label: string; icon: typeof Clock; className: string }> = {
+    'BACKLOG': {
+        label: 'Por hacer',
+        icon: Clock,
+        className: 'status-badge-backlog border',
+    },
     'DELETE': {
         label: 'Eliminado',
         icon: Clock,
         className: 'status-badge-delete border',
-    },
-    'BACKLOG': {
-        label: 'Incompleto',
-        icon: Clock,
-        className: 'status-badge-backlog border',
     },
     'TODO': {
         label: 'Por Hacer',
@@ -36,7 +36,7 @@ const statusConfig: Record<EstatusPedido, { label: string; icon: typeof Clock; c
     },
 };
 
-export const CustomStatusBadge = ({ status, className }: StatusBadgeProps) => {
+export const CustomStatusBadge = ({ status, className = '' }: StatusBadgeProps) => {
     const config = statusConfig[status];
     const Icon = config.icon;
 

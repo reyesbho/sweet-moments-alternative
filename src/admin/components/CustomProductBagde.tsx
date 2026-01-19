@@ -3,15 +3,16 @@ import { Card } from "@/components/ui/card"
 import type { ProductoPedido } from "@/interfaces/pedidos-response"
 import { formatCurrency } from "@/lib/format-currency"
 import { Minus, Plus, Trash2 } from "lucide-react"
-import { useState } from "react"
 
 
 interface Props{
-    productoPedido: ProductoPedido
+    productoPedido: ProductoPedido,
+    onRemove: (producPedido: ProductoPedido) => void,
+    onIncreaseQuantity: (id: string) => void,
+    onDecreaseQuantity: (id: string) => void
 }
-export const CustomProductBagde = ({productoPedido}:Props) => {
-    const {cantidad, caracteristicas, precio, size,producto} = productoPedido;
-    const [quantity, setQuantity] = useState(1);
+export const CustomProductBagde = ({productoPedido, onRemove, onIncreaseQuantity, onDecreaseQuantity }:Props) => {
+    const {cantidad, caracteristicas,subtotal, size,producto} = productoPedido;
     return (
         <Card className="p-3">
             <div className="flex gap-3">
@@ -20,7 +21,7 @@ export const CustomProductBagde = ({productoPedido}:Props) => {
                     <img
                         src={producto?.imagen || '/placeholder.svg'}
                         alt={producto.name}
-                        className="w-full h-full object-cover"
+                        className="w-30 h-30 object-cover"
                     />
                 </div>
 
@@ -28,7 +29,7 @@ export const CustomProductBagde = ({productoPedido}:Props) => {
                 <div className="flex-1 min-w-0">
                     <h4 className="font-medium text-sm truncate">{producto.name}</h4>
                     <p className="text-xs text-muted-foreground">
-                        {formatCurrency(producto.price)} c/u
+                        {formatCurrency(productoPedido.size.price || 0)} c/u
                     </p>
 
                     {/* Quantity Controls */}
@@ -38,17 +39,17 @@ export const CustomProductBagde = ({productoPedido}:Props) => {
                             variant="outline"
                             size="icon"
                             className="h-6 w-6"
-                            onClick={() => setQuantity(prev => prev - 1)}
+                            onClick={() => onDecreaseQuantity(productoPedido.id)}
                         >
                             <Minus className="h-3 w-3" />
                         </Button>
-                        <span className="w-8 text-center text-sm font-medium">{quantity}</span>
+                        <span className="w-8 text-center text-sm font-medium">{cantidad}</span>
                         <Button
                             type="button"
                             variant="outline"
                             size="icon"
                             className="h-6 w-6"
-                            onClick={() => setQuantity(prev => prev+1)}
+                            onClick={() => onIncreaseQuantity(productoPedido.id)}
                         >
                             <Plus className="h-3 w-3" />
                         </Button>
@@ -62,12 +63,12 @@ export const CustomProductBagde = ({productoPedido}:Props) => {
                         variant="ghost"
                         size="icon"
                         className="h-6 w-6 text-destructive hover:text-destructive"
-                        // onClick={() => removeItem(index)}
+                        onClick={() => onRemove(productoPedido)}
                     >
                         <Trash2 className="h-4 w-4" />
                     </Button>
                     <span className="font-semibold text-sm">
-                        {formatCurrency(quantity * producto.price)}
+                        {formatCurrency(productoPedido.subtotal)}
                     </span>
                 </div>
             </div>

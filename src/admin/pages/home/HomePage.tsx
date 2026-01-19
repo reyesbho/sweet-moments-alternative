@@ -5,7 +5,7 @@ import { usePedidos } from "@/admin/hook/usePedidos";
 import { useResumePedidos } from "@/admin/hook/useResume";
 import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/lib/format-currency";
-import { Calendar, CheckCircle2, ClipboardList, Currency, CurrencyIcon, TrendingDown, TrendingUp, TrendingUpIcon } from "lucide-react";
+import { Calendar, CheckCircle2, ClipboardList, TrendingDown, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router"
 
 const HomePage = () => {
