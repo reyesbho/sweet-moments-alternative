@@ -4,9 +4,9 @@ import { formatCurrency } from "@/lib/format-currency";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { useNavigate } from "react-router";
 import { CustomStatusBadge } from "./CustomStatusBadge";
-import { formatDateTime } from "@/lib/format-date";
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import type { Pedido } from "@/interfaces/pedidos-response";
+import { formatDateStringFromTimestamp } from "@/lib/format-date";
 
 export const PedidosTable = ({pedidos}:{pedidos:Pedido[]}) => {
     
@@ -41,14 +41,14 @@ export const PedidosTable = ({pedidos}:{pedidos:Pedido[]}) => {
                             <TableCell>
                                 <div>
                                     <p className="font-medium text-foreground">
-                                        {formatDateTime(order.fechaEntrega)}
+                                        {formatDateStringFromTimestamp(order.fechaEntrega)}
                                     </p>
                                 </div>
                             </TableCell>
                             <TableCell>
                                 <div>
                                     <p className="font-medium text-foreground">
-                                        {order.productos.length}
+                                        {order.productos.reduce((sum, p) => sum + p.cantidad, 0)}
                                     </p>
                                 </div>
                             </TableCell>

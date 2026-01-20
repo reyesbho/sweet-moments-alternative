@@ -1,4 +1,4 @@
-import type { ProductoPedido } from "@/interfaces/pedidos-response"
+import type { Pedido, ProductoPedido } from "@/interfaces/pedidos-response"
 
 type TaskState = {
     productos: ProductoPedido[],
@@ -21,12 +21,22 @@ type TaskAction =
     | { type: ActionType['DECREASE_QUANTITY'], payload: string }
     | { type: ActionType['UPDATE_PRODUCTO'], payload: ProductoPedido }
 
-export const getTasksProductoPedidoInitialState = ():TaskState => {
-    return{
-        productos: [],
-        total: 0,
-        totalProductos: 0
+export const getTasksProductoPedidoInitialState = (pedido: Pedido):TaskState => {
+    if(!pedido)
+    {
+        return{
+            productos: [],
+            total: 0,
+            totalProductos: 0
+        }
+    } else{
+        return{
+            productos: pedido.productos,
+            total: pedido.total,
+            totalProductos: pedido.productos.length
+        }
     }
+        
 }
 
 export const tasksProductosPedidosReducer = (state: TaskState, action: TaskAction): TaskState => {

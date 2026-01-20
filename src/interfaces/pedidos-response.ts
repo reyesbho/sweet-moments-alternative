@@ -1,4 +1,5 @@
 import type { Producto, Size } from "./producto";
+import { Timestamp } from 'firebase/firestore';
 
 export interface PedidosResponse {
     pedidos: Pedido[],
@@ -14,20 +15,17 @@ export interface Pedido {
     estatusPago:   EstatusPago;
     cliente:       string;
     estatus:       EstatusPedido;
-    fechaEntrega:  Fecha;
+    fechaEntrega:  Timestamp;
     total:         number;
     registradoPor: string;
-    fechaCreacion: Fecha;
+    fechaCreacion: Timestamp;
     lugarEntrega:  string;
     productos:     ProductoPedido[];
     detalles: string,
     abonado?:number
 }
 
-export interface Fecha {
-    seconds:     number;
-    nanoseconds: number;
-}
+
 
 export interface ProductoPedido {
     caracteristicas: string;
