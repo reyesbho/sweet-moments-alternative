@@ -33,7 +33,6 @@ export const registerAction = async (email: string, password: string, fullName: 
 
         return authCredentials;
     } catch (error) {
-        console.log(error);
         throw error;
     }
 }

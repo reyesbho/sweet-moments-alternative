@@ -12,7 +12,6 @@ export const loginAction = async (email: string, password: string): Promise<Auth
             email,
             password
         );
-        console.log(userCredentials.user)
         const authCredentials = {
             accessToken: await userCredentials.user.getIdToken(),
             displayName: userCredentials.user.displayName ?? '',
@@ -35,7 +34,6 @@ export const loginAction = async (email: string, password: string): Promise<Auth
 
         return authCredentials;
     } catch (error) {
-        console.log(error);
         throw error;
     }
 }

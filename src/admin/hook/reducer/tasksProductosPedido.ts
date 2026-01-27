@@ -52,7 +52,6 @@ export const tasksProductosPedidosReducer = (state: TaskState, action: TaskActio
             };
         }
         case 'INCREASE_QUANTITY': {
-            console.log()
             const productos = state.productos.
                 map(p => (p.id === action.payload ? { ...p, cantidad: p.cantidad + 1, subtotal: (p.size.price || 0) * (p.cantidad + 1) } : p));
             return {

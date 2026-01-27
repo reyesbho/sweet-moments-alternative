@@ -66,7 +66,6 @@ export const PedidoForm = ({ pedido, isPending, onSubmit }: Props) => {
     const handleSubmitLocal = (pedidoLike:InputsFormPedido) => {
         const newFechaHoraEntrega = addHourToDate(selectedDate, pedidoLike.selectedHour);
         const newPedido:Partial<Pedido> = {...pedidoLike, productos: state.productos, fechaEntrega: Timestamp.fromDate(newFechaHoraEntrega), total: state.total};
-        console.log(newPedido)
         onSubmit(newPedido);
     }
     return (

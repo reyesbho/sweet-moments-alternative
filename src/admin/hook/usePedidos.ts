@@ -2,6 +2,7 @@ import { useInfiniteQuery, } from "@tanstack/react-query"
 import { getAllPedidosAction } from "../actions/get-all-pedidos"
 import { useSearchParams } from "react-router"
 import { normalizeEstatus } from "@/lib/helper-estatus";
+import { formatDateFromTimestamp } from "@/lib/format-date";
 
 
 export const usePedidos = () => {
@@ -33,6 +34,7 @@ export const usePedidos = () => {
     pedidos: newPedidos ?? [],
     totalItems: queryPedidos.data?.pages[0].totalDocs ?? 0,
     totalLoaded: newPedidos?.length ?? 0,
+    fechasPedidos: newPedidos?.map(order => formatDateFromTimestamp(order.fechaEntrega)),
     ...queryPedidos}
 }
 

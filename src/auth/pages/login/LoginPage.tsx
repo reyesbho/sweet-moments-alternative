@@ -21,7 +21,6 @@ export const LoginPage = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     const isSucces = await login(email, password);
-    console.log("LOGIN: ",isSucces)
     if(isSucces){
       navigate('/');
       return;

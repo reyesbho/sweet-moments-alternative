@@ -6,7 +6,6 @@ export const createPedidoAction = async(pedido: Partial<Pedido>) => {
     const isCreating = pedido.id === 'new'; 
     
     try {
-        console.log('REQUES PEDIDO: ', pedido)
         const response = await momentsApi({
             url: isCreating ? '/pedidos' : `/pedidos/${pedido.id}`,
             method: isCreating ? 'POST' : 'PATCH',
