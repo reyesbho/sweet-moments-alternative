@@ -56,6 +56,7 @@ export const appRouter = createBrowserRouter([
         element:<AdminRoute><CatalogosLayout></CatalogosLayout></AdminRoute>,
         children:[
             {
+                path:'productos',
                 index:true,
                 element: <ProductosCatalogoPage></ProductosCatalogoPage>,
             },

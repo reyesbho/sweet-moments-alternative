@@ -11,7 +11,7 @@ import { useNavigate } from "react-router"
 const HomePage = () => {
   const navigate = useNavigate();
   const {data} = useResumePedidos();
-  const {data: pedidos} = usePedidos();
+  const {pedidos} = usePedidos();
   return (
     <>
       <CustomJumbotron
@@ -78,7 +78,7 @@ const HomePage = () => {
             Ver todos →
           </Button>
         </div>
-        <PedidosTable pedidos={pedidos?.pedidos || []}></PedidosTable>
+        <PedidosTable pedidos={pedidos || []}></PedidosTable>
       </div>
     </>
   )

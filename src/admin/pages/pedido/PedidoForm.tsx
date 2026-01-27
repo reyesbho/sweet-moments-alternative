@@ -41,7 +41,12 @@ export const PedidoForm = ({ pedido, isPending, onSubmit }: Props) => {
     const navigate = useNavigate();
 
     const { register, handleSubmit, formState: { errors }, control } = useForm<InputsFormPedido>({
-        defaultValues: { ...pedido, selectedHour: getHourFromDate(selectedDate), estatus: pedido.estatus ?? 'TODO' }
+        defaultValues: { 
+            ...pedido, 
+            selectedHour: getHourFromDate(selectedDate), 
+            estatus: pedido.estatus ?? 'TODO',
+            estatusPago: pedido.estatusPago ?? 'PENDIENTE'
+        }
     });
 
     const handleCalendar = (date: Date) => {
@@ -159,7 +164,7 @@ export const PedidoForm = ({ pedido, isPending, onSubmit }: Props) => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Estado</Label>
+                                    <Label>Estatus</Label>
                                     <Controller
                                         name="estatus"
                                         control={control}
@@ -176,6 +181,30 @@ export const PedidoForm = ({ pedido, isPending, onSubmit }: Props) => {
                                                     <SelectItem value="TODO">Por Hacer</SelectItem>
                                                     <SelectItem value="DONE">Entregado</SelectItem>
                                                     <SelectItem value="CANCELED">Cancelado</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        )}
+                                    />
+
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Estatus pago</Label>
+                                    <Controller
+                                        name="estatusPago"
+                                        control={control}
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <Select
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Selecciona un estado" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="PENDIENTE">Pendiente</SelectItem>
+                                                    <SelectItem value="PAGADO">Pagado</SelectItem>
+                                                    <SelectItem value="ABONADO">Abonado</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         )}

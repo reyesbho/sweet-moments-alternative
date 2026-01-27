@@ -4,7 +4,7 @@ import { usePedidos } from "@/admin/hook/usePedidos"
 import { CustomPagination } from "@/components/custom/CustomPagination"
 
 const PedidosPage = () => {
-  const {data} = usePedidos();
+  const {pedidos, hasNextPage, fetchNextPage, totalLoaded, totalItems} = usePedidos();
   return (
     <>
         <CustomJumbotron
@@ -12,8 +12,8 @@ const PedidosPage = () => {
           subtitle="Todos los pedidos"
           showButtonNew={true}
         ></CustomJumbotron>
-        <PedidosTable  pedidos={data?.pedidos || []} />
-        <CustomPagination totalPages={data?.totalPages || 0}></CustomPagination>
+        <PedidosTable  pedidos={pedidos} />
+        <CustomPagination hasNextPage={hasNextPage} fetchNextPage={fetchNextPage} totalItems={totalItems} totalLoaded={totalLoaded} ></CustomPagination>
     </>
   )
 }

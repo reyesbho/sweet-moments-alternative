@@ -29,7 +29,7 @@ const menusPedidos: MenuSidebar[] = [
 
 const menusCatalogos: MenuSidebar[] = [
     { to: '/catalogos/productos', title: 'Productos', icon:Package },
-    { to: '/catalogos/productos:new', title: 'Nuevo Producto', icon:PlusCircle }
+    { to: '/catalogos/productos/new', title: 'Nuevo Producto', icon:PlusCircle }
 ]
 
 export function CustomSidebar() {
