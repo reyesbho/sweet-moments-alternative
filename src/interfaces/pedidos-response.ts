@@ -39,3 +39,10 @@ export interface ProductoPedido {
 
 export type EstatusPedido = 'BACKLOG' | 'DONE' | 'TODO' | 'CANCELED' | 'DELETE';
 export type EstatusPago = 'PENDIENTE' | 'PAGADO' | 'ABONADO';
+export const ESTATUS_PEDIDO = [
+  'BACKLOG',
+  'DONE',
+  'TODO',
+  'CANCELED',
+  'DELETE',
+] as const;

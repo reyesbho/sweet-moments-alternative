@@ -6,11 +6,12 @@ interface Options {
     fechaInicio?: string,
     fechaFin?: string,
     cursorFechaCreacion?:string,
-    pageSize?: number | string
+    pageSize?: number | string,
+    cliente?: string
 }
 
 export const getAllPedidosAction = async(options: Options):Promise<PedidosResponse> => {
-    const {estatus, fechaInicio, fechaFin, cursorFechaCreacion, pageSize = 10} = options;
+    const {estatus, fechaInicio, fechaFin, cursorFechaCreacion, pageSize = 10, cliente} = options;
     try {
         const {data} = await momentsApi.get<PedidosResponse>('/pedidos',{
             params: {
@@ -18,7 +19,8 @@ export const getAllPedidosAction = async(options: Options):Promise<PedidosRespon
                 fechaInicio,
                 fechaFin,
                 cursorFechaCreacion,
-                pageSize
+                pageSize,
+                cliente
             }
         });
         return data;

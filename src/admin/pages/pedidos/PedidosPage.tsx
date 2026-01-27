@@ -1,3 +1,4 @@
+import { CustomFilters } from "@/admin/components/CustomFilters"
 import CustomJumbotron from "@/admin/components/CustomJumbotron"
 import { PedidosTable } from "@/admin/components/PedidosTable"
 import { usePedidos } from "@/admin/hook/usePedidos"
@@ -12,6 +13,7 @@ const PedidosPage = () => {
           subtitle="Todos los pedidos"
           showButtonNew={true}
         ></CustomJumbotron>
+        <CustomFilters></CustomFilters>
         <PedidosTable  pedidos={pedidos} />
         <CustomPagination hasNextPage={hasNextPage} fetchNextPage={fetchNextPage} totalItems={totalItems} totalLoaded={totalLoaded} ></CustomPagination>
     </>

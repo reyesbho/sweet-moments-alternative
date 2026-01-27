@@ -1,24 +1,26 @@
 import { useInfiniteQuery, } from "@tanstack/react-query"
 import { getAllPedidosAction } from "../actions/get-all-pedidos"
 import { useSearchParams } from "react-router"
-import type { EstatusPedido } from "@/interfaces/pedidos-response";
+import { normalizeEstatus } from "@/lib/helper-estatus";
 
 
 export const usePedidos = () => {
     const [searchParams] = useSearchParams();
-    const estatus = searchParams.get('estatus') as EstatusPedido || undefined;
+    const estatus = normalizeEstatus(searchParams.get('estatus'));
     const fechaInicio  = searchParams.get('fechaInicio') ?? undefined;
     const fechaFin  = searchParams.get('fechaFin') ?? undefined;
     const pageSize = searchParams.get('pageSize') || 15;
+    const cliente = searchParams.get('cliente') || undefined;
 
     const queryPedidos = useInfiniteQuery({
-        queryKey: ['pedidos', {estatus, fechaInicio, fechaFin,pageSize}],
+        queryKey: ['pedidos', {estatus, fechaInicio, fechaFin,pageSize, cliente}],
         queryFn: ({pageParam}:{pageParam: string | undefined}) => getAllPedidosAction({
           estatus: estatus,
           fechaInicio,
           fechaFin,
           cursorFechaCreacion: pageParam,
           pageSize: isNaN(+pageSize) ? 0 : pageSize,
+          cliente
         }),
         initialPageParam: undefined,
         getNextPageParam:(lastPage) => lastPage.hasMore ? lastPage.nextCursor : undefined,
