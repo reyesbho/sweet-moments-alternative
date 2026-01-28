@@ -33,8 +33,8 @@ export const useCalendar = () => {
 
     const handleChangeMonth = useCallback((date: Date) => {
         setSearchParams({
-            fechaInicio: getInitialDateOfMonth(new Date()),
-            fechaFin: getEndDateOfMont(new Date()),
+            fechaInicio: getInitialDateOfMonth(date),
+            fechaFin: getEndDateOfMont(date),
         })
     }, [setSearchParams])
 
