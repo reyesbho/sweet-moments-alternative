@@ -1,51 +1,14 @@
-import { useState, useMemo, useEffect } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 
-import { format, isSameDay } from 'date-fns';
-import { es, se } from 'date-fns/locale';
-import { Clock, MapPin } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import CustomJumbotron from '@/admin/components/CustomJumbotron';
-import { usePedidos } from '@/admin/hook/usePedidos';
-import { CustomStatusBadge } from '@/admin/components/CustomStatusBadge';
-import { formatDateFromTimestamp, formatDateStringFromTimestamp, getEndDateOfMont, getInitialDateOfMonth } from '@/lib/format-date';
+import { CustomPedidoCard } from '@/admin/components/CustomPedidoCard';
+import { useCalendar } from '@/admin/hook/useCalendar';
 
 export default function OrderCalendar() {
-  const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const {fechasPedidos, pedidos} = usePedidos();
-  const fechaInicio  = searchParams.get('fechaInicio') ?? undefined;
-  const fechaFin  = searchParams.get('fechaFin') ?? undefined;
+  const {handleChangeMonth,  selectedDate, setSelectedDate, fechasPedidos, ordersOnSelectedDate} = useCalendar();
 
-  useEffect(() => {
-    if(fechaInicio === undefined && fechaFin == undefined){
-        searchParams.set('fechaInicio', getInitialDateOfMonth(new Date()));
-        searchParams.set('fechaFin', getEndDateOfMont(new Date()));
-        setSearchParams(searchParams)
-    }
-  }, [])
-
-  const handleChangeMont = (date: Date) => {
-    searchParams.set('fechaInicio', getInitialDateOfMonth(date));
-        searchParams.set('fechaFin', getEndDateOfMont(date));
-        setSearchParams(searchParams)
-  }
-
-  const ordersOnSelectedDate = useMemo(() => {
-    if (!selectedDate) return [];
-    return pedidos.filter(order => 
-      isSameDay(formatDateFromTimestamp(order.fechaEntrega), selectedDate)
-    );
-  }, [selectedDate]);
-
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-MX', {
-      style: 'currency',
-      currency: 'MXN',
-    }).format(amount);
-  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -58,8 +21,8 @@ export default function OrderCalendar() {
           <div className="card-elevated p-4">
             <Calendar
               mode="single"
-              onNextClick={handleChangeMont}
-              onPrevClick={handleChangeMont}
+              onNextClick={handleChangeMonth}
+              onPrevClick={handleChangeMonth}
               selected={selectedDate}
               onSelect={setSelectedDate}
               locale={es}
@@ -88,7 +51,7 @@ export default function OrderCalendar() {
         <div className="lg:col-span-2 shadow-md">
           <div className="card-elevated p-6">
             <h2 className="font-display font-semibold text-lg text-foreground mb-4">
-              {selectedDate 
+              {selectedDate
                 ? format(selectedDate, "EEEE d 'de' MMMM", { locale: es })
                 : 'Selecciona una fecha'
               }
@@ -97,47 +60,7 @@ export default function OrderCalendar() {
             {ordersOnSelectedDate.length > 0 ? (
               <div className="space-y-4">
                 {ordersOnSelectedDate.map((order) => (
-                  <div
-                    key={order.id}
-                    onClick={() => navigate(`/pedidos/${order.id}`)}
-                    className="p-4 bg-muted/50 rounded-xl hover:bg-muted cursor-pointer transition-colors shadow-lg"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="font-mono text-sm text-primary font-medium">
-                            {order.id}
-                          </span>
-                          <CustomStatusBadge status={order.estatus} />
-                        </div>
-                        <h3 className="font-semibold text-foreground">
-                          {order.cliente}
-                        </h3>
-                        <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            {formatDateStringFromTimestamp(order.fechaEntrega)}
-                          </div>
-                          {order.lugarEntrega && (
-                            <div className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {order.lugarEntrega}
-                            </div>
-                          )}
-                        </div>
-                        <div className="mt-3">
-                          <p className="text-sm text-muted-foreground">
-                            {order.productos.length} producto{order.productos.length !== 1 ? 's' : ''}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xl font-display font-bold text-primary">
-                          {formatCurrency(order.total)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <CustomPedidoCard pedido={order}></CustomPedidoCard>
                 ))}
               </div>
             ) : (
