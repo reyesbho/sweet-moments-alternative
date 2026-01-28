@@ -1,7 +1,7 @@
 export interface Producto {
     id:          string;
     name:        string;
-    imagen:      null;
+    imagen:      string | null;
     sizes:       Size[];
     category:    string;
     descripcion: string;
