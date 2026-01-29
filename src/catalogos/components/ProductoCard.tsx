@@ -58,7 +58,7 @@ export const ProductoCard = ({ producto }: productoCardProps) => {
                         <h3 className="font-display font-semibold text-foreground truncate">
                             {producto.name}
                         </h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                        <p className="text-sm text-muted-foreground my-2">
                             {producto.descripcion}
                         </p>
                     </div>
@@ -69,7 +69,7 @@ export const ProductoCard = ({ producto }: productoCardProps) => {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => navigate(`/productoos/${producto.id}/editar`)}>
+                            <DropdownMenuItem onClick={() => navigate(`/catalogos/productos/${producto.id}`)}>
                                 <Edit className="w-4 h-4 mr-2" />
                                 Editar
                             </DropdownMenuItem>
@@ -80,12 +80,12 @@ export const ProductoCard = ({ producto }: productoCardProps) => {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-
-                <div className="flex flex-row flex-wrap gap-2">
+                <hr></hr>
+                <div className="flex flex-row flex-wrap gap-2 my-2">
                     {producto.sizes.map(size => (
-                        <div key={size.size} className="flex flex-col gap-1 items-start">
+                        <div key={size.size} className="flex flex-col gap-1 items-center">
                             <Label>{size.size}</Label>
-                            <Badge className="bg-gray-200 text-black">{formatCurrency(size.price ?? 0)}</Badge>
+                            <Badge className="bg-gray-200 text-black font-bold">{formatCurrency(size.price ?? 0)}</Badge>
                         </div>
                     ))}
                 </div>

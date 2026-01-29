@@ -1,52 +1,89 @@
+import SizeBadge from "@/admin/components/SizeBadge"
 import { useCategories } from "@/admin/hook/useCategories"
 import { NewCategoryModal } from "@/catalogos/components/NewCategoryModal"
+import { NewSizeModal } from "@/catalogos/components/NewSizeModal"
+import { ErroItem } from "@/components/custom/ErrorItem"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import type { Category, Producto } from "@/interfaces/producto"
+import type { Category, Producto, Size } from "@/interfaces/producto"
 import { Package, Upload } from "lucide-react"
 import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
 
 interface Props {
-    producto: Producto,
-    isPending: boolean,
-    onSubmit: (productoLike: Partial<Producto>) => Promise<void>
+  producto: Producto,
+  isPending: boolean,
+  onSubmit: (productoLike: Partial<Producto>) => Promise<void>
 }
 
 
-export const ProductoForm = ({producto, isPending, onSubmit}:Props) => {
-    const {data: categories, mutation: mutationCatetory} =useCategories();
-    const [showNewCategoryModal, setShowNewCategoryModal] = useState<boolean>(false);
-    const navigate = useNavigate();
-    const {register, handleSubmit, formState:{errors}, control } = useForm<Producto>({
-        defaultValues: producto
-    });
+export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
+  const navigate = useNavigate();
+  const { data: categories, mutation: mutationCatetory } = useCategories();
+  const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
+  const [showNewCategoryModal, setShowNewCategoryModal] = useState<boolean>(false);
+  const [showNewSizeModal, setShowNewSizeModal] = useState<boolean>(false);
+  const { register, handleSubmit, formState: { errors }, setError, control, setValue, watch, clearErrors } = useForm<Producto>({
+    defaultValues: producto
+  });
+  const categoryWatch = watch('category');
+  const sizesWatch = watch('sizes');
 
-    const handleSubmitLocal = (productoLike: Producto) => {
-        console.log('')
+  const handleSubmitLocal = (productoLike: Producto) => {
+    if(!productoLike.category) {
+      setError('category', { message: 'Seleccione una categoria' })
+      return;
     }
 
-    const handleSubmiteNewCatery = async(categoryLike: Partial<Category>) => {
-      mutationCatetory.mutate(categoryLike, {
-        onSuccess: () => {
-          toast.success('Categoria agregada correctamente', {position: 'top-right'});
-          setShowNewCategoryModal(false);
-        },
-        onError: () => {
-          toast.error('Error al crear la categoria')
-        }
-      })
-    }
- 
+    if (!productoLike.sizes || productoLike.sizes.length <= 0) {
+      setError('sizes', { message: 'Se requere minimo un tamaño y precio' })
+      return;
+    };
+    console.log(productoLike)
+    onSubmit(productoLike);
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('Handle files change')
+    const files = e.target.files;
+    if (!files) return;
+    setSelectedImage(files[0]);
+  }
+
+  const handleSubmiteNewCatery = async (categoryLike: Partial<Category>) => {
+    mutationCatetory.mutate(categoryLike, {
+      onSuccess: () => {
+        toast.success('Categoria agregada correctamente', { position: 'top-right' });
+        setShowNewCategoryModal(false);
+      },
+      onError: () => {
+        toast.error('Error al crear la categoria')
+      }
+    })
+  }
+
+  const handleSubmitNewSize = (size: Size) => {
+    console.log(size)
+    const newSizes = [...sizesWatch, size];
+    setValue("sizes", newSizes);
+    setShowNewSizeModal(false);
+  }
+
+  const handleSelectCategory = (category: Category) => {
+    setValue("category", category.descripcion);
+    clearErrors("category");
+  }
+
+
   return (
     <>
-    <form onSubmit={handleSubmit(handleSubmitLocal)} className="space-y-6">
+      <form onSubmit={handleSubmit(handleSubmitLocal)} className="space-y-6">
         {/* Image Upload */}
         <div className="card-elevated p-6 shadow-md border-solid border-2 rounded-2xl">
           <Label className="text-base font-display font-semibold mb-4 block">
@@ -54,15 +91,20 @@ export const ProductoForm = ({producto, isPending, onSubmit}:Props) => {
           </Label>
           <div className="flex items-start gap-6">
             <div className="w-40 h-40 rounded-xl border-2 border-dashed border-border bg-muted/50 overflow-hidden flex items-center justify-center">
-              {producto?.imagen ? (
-                <img 
-                  src={producto.imagen} 
-                  alt="Preview" 
+              {selectedImage ?
+                (<img
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Preview"
                   className="w-full h-full object-cover"
-                />
-              ) : (
-                <Package className="w-12 h-12 text-muted-foreground/40" />
-              )}
+                />)
+                :
+                (producto?.imagen ? (<img
+                  src={producto.imagen}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />) : <Package className="w-12 h-12 text-muted-foreground/40" />)
+              }
+
             </div>
             <div className="flex-1">
               <label htmlFor="image-upload" className="cursor-pointer">
@@ -74,7 +116,7 @@ export const ProductoForm = ({producto, isPending, onSubmit}:Props) => {
                   id="image-upload"
                   type="file"
                   accept="image/*"
-                  {...register('imagen', {required: true})}
+                  onChange={handleFileChange}
                   className="hidden"
                 />
               </label>
@@ -95,44 +137,46 @@ export const ProductoForm = ({producto, isPending, onSubmit}:Props) => {
               <Label htmlFor="name">Nombre del producto *</Label>
               <Input
                 id="name"
-                {...register('name',{required: true}) }
+                {...register('name', { required: { value: true, message: 'El nombre es requerido' }, max: { value: 200, message: 'Maximo 200 caracteres' } })}
                 placeholder="Ej: Pastel de Tres Leches"
                 required
               />
+              <ErroItem error={errors.name}></ErroItem>
             </div>
             <div className="space-y-2">
               <Label htmlFor="description">Descripción</Label>
               <Textarea
                 id="description"
-                {...register('descripcion')}
+                {...register('descripcion', { max: 200 })}
                 placeholder="Describe tu producto..."
                 rows={3}
               />
+              <ErroItem error={errors.descripcion}></ErroItem>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Categoría *</Label>
-                <Select 
-                onValueChange={(value) => {
-                    if (value === 'nueva') {
-                      setShowNewCategoryModal(true);
-                    }
-                  }}
-                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar categoría" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories?.map((category) => (
-                      <SelectItem key={category.id} value={category.descripcion}>
-                        {category.descripcion}
-                      </SelectItem>
-                    ))}
-                    <SelectItem value="nueva">+ Nueva categoría</SelectItem>
-                  </SelectContent>
-                </Select>
+            <div className="space-y-2">
+              <Label htmlFor="sizes">Tamaños y precios</Label>
+              <Button type="button" onClick={() => setShowNewSizeModal(true)}>+ Agregar tamaño y precio</Button>
+              <div className="flex flex-row gap-3 flex-wrap">
+                {sizesWatch.length > 0 && sizesWatch.map(size => (
+                  <SizeBadge key={size.size} size={size} ></SizeBadge>
+                ))}
               </div>
             </div>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <Label>Categoría *</Label>
+                  <Button className="text-sm" type="button" onClick={() => setShowNewCategoryModal(true)}> + Nueva categoria</Button>
+                </div>
+                <ErroItem error={errors.category}></ErroItem>
+                <div className="flex flex-row flex-wrap gap-1">
+                  {categories && categories.map(cat => {
+                    const isSelected = categoryWatch === cat.descripcion;
+                    return (
+                      <Badge key={cat.id} className="cursor-pointer py-2" variant={isSelected ? 'default' : 'outline'} onClick={() => handleSelectCategory(cat)} >{cat.descripcion}</Badge>
+                    )
+                  })}
+                </div>
+              </div>
           </div>
         </div>
 
@@ -147,10 +191,20 @@ export const ProductoForm = ({producto, isPending, onSubmit}:Props) => {
                 Activa o desactiva la disponibilidad del producto
               </p>
             </div>
-            <Switch
-              id="available"
-              {...register('estatus')}
-            />
+            <Controller
+              name="estatus"
+              rules={{ required: true }}
+              control={control}
+              render={({ field }) => (
+                <Switch
+                  id="available"
+                  checked={field.value}
+                  onChange={field.onChange}
+                />
+              )}
+            >
+            </Controller>
+
           </div>
         </div>
 
@@ -159,7 +213,7 @@ export const ProductoForm = ({producto, isPending, onSubmit}:Props) => {
           <Button type="button" variant="outline" onClick={() => navigate('/productos')}>
             Cancelar
           </Button>
-          <Button type="submit" className="gradient-primary text-primary-foreground">
+          <Button disabled={isPending} type="submit" className="gradient-primary text-primary-foreground">
             Guardar Cambios
           </Button>
         </div>
@@ -170,6 +224,13 @@ export const ProductoForm = ({producto, isPending, onSubmit}:Props) => {
         existingCategories={categories || []}
         onCategoryCreated={handleSubmiteNewCatery}
       />
+      <NewSizeModal
+        open={showNewSizeModal}
+        onOpenChange={setShowNewSizeModal}
+        existingSizes={sizesWatch}
+        onSizeAdded={handleSubmitNewSize}
+      >
+      </NewSizeModal>
     </>
   )
 }

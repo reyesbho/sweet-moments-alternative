@@ -14,13 +14,13 @@ const PedidoPage = () => {
   const handleSubmit = async (pedidoLike: Partial<Pedido>) => {
     mutation.mutate(pedidoLike, {
       onSuccess: (data) => {
-        toast.success('Producto actualizado correctamente', {
+        toast.success('Pedido actualizado correctamente', {
           position: 'top-right'
         });
         navigate(`/pedidos/${data.id}`);
       },
       onError: () => {
-        toast.error('Error al actualizar el pedido');
+        toast.error('Error al actualizar el pedido',{position: 'top-right'});
       }
     })
   }

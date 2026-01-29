@@ -12,11 +12,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Minus, Plus, ShoppingBag } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import type { Size } from '@/interfaces/producto';
 import type { ProductoPedido } from '@/interfaces/pedidos-response';
 import { v4 as uuidv4 } from 'uuid';
 import { formatCurrency } from '@/lib/format-currency';
+import SizeBadge from './SizeBadge';
 
 
 interface ProductConfigModalProps {
@@ -34,18 +34,18 @@ export function ProductConfigModal({
   onConfirm,
 }: ProductConfigModalProps) {
   const { producto: product } = productoPedido;
-  const [size, setSize] = useState<Size | undefined>(productoPedido.producto?.sizes.find(size => size.size === 'Por defecto'));
+  const [sizeSelected, setSizeSelected] = useState<Size | undefined>(productoPedido.producto?.sizes.find(size => size.size === 'Por defecto'));
   const [errorSize, setErrorSize] = useState<String | null>(null)
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState('');
   const subTotal = useMemo(() => {
-    if (!size) return 0;
-    return size.price * quantity;
-  }, [size, quantity])
+    if (!sizeSelected) return 0;
+    return sizeSelected.price * quantity;
+  }, [sizeSelected, quantity])
 
   const handleClose = () => {
     // Reset state when closing
-    setSize({ size: 'Por defecto', price: 0 });
+    setSizeSelected({ size: 'Por defecto', price: 0 });
     setQuantity(1);
     setNotes('');
     onClose();
@@ -54,7 +54,7 @@ export function ProductConfigModal({
   if (!productoPedido || !product) return null;
 
   const handleConfirm = () => {
-    if (!size) {
+    if (!sizeSelected) {
       setErrorSize('Seleccione un tamaño')
       return;
     }
@@ -62,7 +62,7 @@ export function ProductConfigModal({
     const productoFinal: ProductoPedido = {
       id: productoPedido.id ?? uuidv4(),
       producto: productoPedido.producto!,
-      size: size,
+      size: sizeSelected,
       cantidad: quantity,
       caracteristicas: notes,
       subtotal: subTotal,
@@ -113,32 +113,9 @@ export function ProductConfigModal({
             {errorSize && <p className='text-red-500'>Seleccione un tamaño</p>}
             <div className="grid grid-cols-3 gap-2">
               {product.sizes.map((sizeOption) => {
-                const isSelected = size?.size === sizeOption.size;
+                const isSelected = sizeSelected?.size === sizeOption.size;
                 return (
-                  <button
-                    key={sizeOption.size}
-                    type="button"
-                    onClick={() => {
-                      setErrorSize(null);
-                      setSize(sizeOption);
-                    }}
-                    className={cn(
-                      'flex flex-col items-center gap-1 p-3 rounded-lg border-2 transition-all',
-                      isSelected
-                        ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border hover:border-primary/50 hover:bg-muted/50'
-                    )}
-                  >
-                    <span className="font-medium text-sm">{sizeOption.size}</span>
-                    <span
-                      className={cn(
-                        'text-xs',
-                        isSelected ? 'text-primary' : 'text-muted-foreground'
-                      )}
-                    >
-                      {formatCurrency(sizeOption.price || 0)}
-                    </span>
-                  </button>
+                  <SizeBadge key={sizeOption?.size} size={sizeOption} isSelected={isSelected} onSelected={(sizeSelected) => {setErrorSize(''); setSizeSelected(sizeSelected);}}></SizeBadge>
                 );
               })}
             </div>

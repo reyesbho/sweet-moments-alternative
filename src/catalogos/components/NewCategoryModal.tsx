@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -26,13 +26,13 @@ export function NewCategoryModal({
   onCategoryCreated,
   existingCategories,
 }: NewCategoryModalProps) {
-  const [categoryName, setCategoryName] = useState('');
   const [error, setError] = useState('');
+  const categoryRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const trimmedName = categoryName.trim();
+    const trimmedName = categoryRef.current?.value;
     
     if (!trimmedName) {
       setError('El nombre de la categoría es requerido');
@@ -50,13 +50,11 @@ export function NewCategoryModal({
     }
     
     onCategoryCreated({descripcion: trimmedName});
-    setCategoryName('');
     setError('');
     onOpenChange(false);
   };
 
   const handleClose = () => {
-    setCategoryName('');
     setError('');
     onOpenChange(false);
   };
@@ -83,11 +81,7 @@ export function NewCategoryModal({
             <Label htmlFor="category-name">Nombre de la categoría *</Label>
             <Input
               id="category-name"
-              value={categoryName}
-              onChange={(e) => {
-                setCategoryName(e.target.value);
-                setError('');
-              }}
+              ref={categoryRef}
               placeholder="Ej: rosca_reyes"
               autoFocus
             />
@@ -96,12 +90,12 @@ export function NewCategoryModal({
             )}
           </div>
           
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="gap-2 ">
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancelar
             </Button>
             <Button type="submit">
-              Crear Categoría
+              Agregar categoría
             </Button>
           </DialogFooter>
         </form>

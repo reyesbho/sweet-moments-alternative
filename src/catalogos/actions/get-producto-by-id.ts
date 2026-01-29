@@ -7,9 +7,9 @@ export const getProductoById = async(id: string): Promise<Producto> => {
 
     if(id === 'new'){
         return {
-            id: '',
+            id: 'new',
             name: '',
-            imagen: '',
+            imagen: undefined,
             sizes: [],
             category: '',
             descripcion: '',
