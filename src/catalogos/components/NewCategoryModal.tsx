@@ -15,7 +15,7 @@ import type { Category } from '@/interfaces/producto';
 
 interface NewCategoryModalProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange: () => void;
   onCategoryCreated: (categoryName: Partial<Category>) => void;
   existingCategories: Category[];
 }
@@ -51,12 +51,12 @@ export function NewCategoryModal({
     
     onCategoryCreated({descripcion: trimmedName});
     setError('');
-    onOpenChange(false);
+    onOpenChange();
   };
 
   const handleClose = () => {
     setError('');
-    onOpenChange(false);
+    onOpenChange();
   };
 
   return (

@@ -3,7 +3,6 @@ import type { Producto } from "@/interfaces/producto"
 
 
 export const createProductoAction = async (productoLike: Partial<Producto>) => {
-    console.log("createProductoAction: ",productoLike)
     const isCreating = productoLike.id === 'new';
     try {
         const { data } = await momentsApi({

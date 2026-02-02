@@ -21,22 +21,21 @@ type TaskAction =
     | { type: ActionType['DECREASE_QUANTITY'], payload: string }
     | { type: ActionType['UPDATE_PRODUCTO'], payload: ProductoPedido }
 
-export const getTasksProductoPedidoInitialState = (pedido: Pedido):TaskState => {
-    if(!pedido)
-    {
-        return{
+export const getTasksProductoPedidoInitialState = (pedido: Pedido): TaskState => {
+    if (!pedido) {
+        return {
             productos: [],
             total: 0,
             totalProductos: 0
         }
-    } else{
-        return{
-            productos: pedido.productos,
-            total: pedido.total,
-            totalProductos: pedido.productos.length
-        }
     }
-        
+    return {
+        productos: pedido.productos,
+        total: pedido.total,
+        totalProductos: pedido.productos.length
+
+    }
+
 }
 
 export const tasksProductosPedidosReducer = (state: TaskState, action: TaskAction): TaskState => {
@@ -81,9 +80,9 @@ export const tasksProductosPedidosReducer = (state: TaskState, action: TaskActio
         }
         case 'DECREASE_QUEANTITY': {
             const productos = state.productos.
-                map(p => (p.id === action.payload && p.cantidad > 1 ? { ...p, cantidad: p.cantidad - 1,subtotal: (p.size.price || 0) * (p.cantidad - 1) } : p));
+                map(p => (p.id === action.payload && p.cantidad > 1 ? { ...p, cantidad: p.cantidad - 1, subtotal: (p.size.price || 0) * (p.cantidad - 1) } : p));
             return {
-                ...state, 
+                ...state,
                 productos: productos,
                 totalProductos: productos.reduce((sum, p) => sum + p.cantidad, 0),
                 total: productos.reduce((sum, p) => sum + (p.size.price * p.cantidad), 0)

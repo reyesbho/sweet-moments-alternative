@@ -1,7 +1,7 @@
 import SizeBadge from "@/admin/components/SizeBadge"
-import { useCategories } from "@/admin/hook/useCategories"
 import { NewCategoryModal } from "@/catalogos/components/NewCategoryModal"
 import { NewSizeModal } from "@/catalogos/components/NewSizeModal"
+import { useProductoForm } from "@/catalogos/hooks/useProductoForm"
 import { ErroItem } from "@/components/custom/ErrorItem"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -9,12 +9,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import type { Category, Producto, Size } from "@/interfaces/producto"
+import type { Producto } from "@/interfaces/producto"
 import { Package, Upload } from "lucide-react"
-import { useState } from "react"
-import { Controller, useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
 import { useNavigate } from "react-router"
-import { toast } from "sonner"
 
 interface Props {
   producto: Producto,
@@ -25,61 +23,19 @@ interface Props {
 
 export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
   const navigate = useNavigate();
-  const { data: categories, mutation: mutationCatetory } = useCategories();
-  const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
-  const [showNewCategoryModal, setShowNewCategoryModal] = useState<boolean>(false);
-  const [showNewSizeModal, setShowNewSizeModal] = useState<boolean>(false);
-  const { register, handleSubmit, formState: { errors }, setError, control, setValue, watch, clearErrors } = useForm<Producto>({
-    defaultValues: producto
-  });
-  const categoryWatch = watch('category');
-  const sizesWatch = watch('sizes');
-
-  const handleSubmitLocal = (productoLike: Producto) => {
-    if(!productoLike.category) {
-      setError('category', { message: 'Seleccione una categoria' })
-      return;
-    }
-
-    if (!productoLike.sizes || productoLike.sizes.length <= 0) {
-      setError('sizes', { message: 'Se requere minimo un tamaño y precio' })
-      return;
-    };
-    console.log(productoLike)
-    onSubmit(productoLike);
-  }
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Handle files change')
-    const files = e.target.files;
-    if (!files) return;
-    setSelectedImage(files[0]);
-  }
-
-  const handleSubmiteNewCatery = async (categoryLike: Partial<Category>) => {
-    mutationCatetory.mutate(categoryLike, {
-      onSuccess: () => {
-        toast.success('Categoria agregada correctamente', { position: 'top-right' });
-        setShowNewCategoryModal(false);
-      },
-      onError: () => {
-        toast.error('Error al crear la categoria')
-      }
-    })
-  }
-
-  const handleSubmitNewSize = (size: Size) => {
-    console.log(size)
-    const newSizes = [...sizesWatch, size];
-    setValue("sizes", newSizes);
-    setShowNewSizeModal(false);
-  }
-
-  const handleSelectCategory = (category: Category) => {
-    setValue("category", category.descripcion);
-    clearErrors("category");
-  }
-
+  const {
+    dispatch, 
+    sizesWatch, 
+    categoryWatch, 
+    categories, 
+    handleSubmitLocal, 
+    productoFormState,
+    handleFileChange, 
+    handleSubmitedNewCatery,
+    handleSubmitNewSize,
+    handleSelectCategory, 
+    form:{handleSubmit, register, formState:{errors}, control}
+  } = useProductoForm({producto, onSubmit});
 
   return (
     <>
@@ -91,9 +47,9 @@ export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
           </Label>
           <div className="flex items-start gap-6">
             <div className="w-40 h-40 rounded-xl border-2 border-dashed border-border bg-muted/50 overflow-hidden flex items-center justify-center">
-              {selectedImage ?
+              {productoFormState.selectedImage ?
                 (<img
-                  src={URL.createObjectURL(selectedImage)}
+                  src={URL.createObjectURL(productoFormState.selectedImage)}
                   alt="Preview"
                   className="w-full h-full object-cover"
                 />)
@@ -155,7 +111,7 @@ export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="sizes">Tamaños y precios</Label>
-              <Button type="button" onClick={() => setShowNewSizeModal(true)}>+ Agregar tamaño y precio</Button>
+              <Button type="button" onClick={() => dispatch({type:"OPEN_SIZE_MODAL"})}>+ Agregar tamaño y precio</Button>
               <div className="flex flex-row gap-3 flex-wrap">
                 {sizesWatch.length > 0 && sizesWatch.map(size => (
                   <SizeBadge key={size.size} size={size} ></SizeBadge>
@@ -165,7 +121,7 @@ export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label>Categoría *</Label>
-                  <Button className="text-sm" type="button" onClick={() => setShowNewCategoryModal(true)}> + Nueva categoria</Button>
+                  <Button className="text-sm" type="button" onClick={() => dispatch({type: 'OPEN_CATEGORY_MODAL'})}> + Nueva categoria</Button>
                 </div>
                 <ErroItem error={errors.category}></ErroItem>
                 <div className="flex flex-row flex-wrap gap-1">
@@ -219,14 +175,14 @@ export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
         </div>
       </form>
       <NewCategoryModal
-        open={showNewCategoryModal}
-        onOpenChange={setShowNewCategoryModal}
+        open={productoFormState.showNewCategoryModal}
+        onOpenChange={() => dispatch({type: 'CLOSE_CATEGORY_MODAL'})}
         existingCategories={categories || []}
-        onCategoryCreated={handleSubmiteNewCatery}
+        onCategoryCreated={handleSubmitedNewCatery}
       />
       <NewSizeModal
-        open={showNewSizeModal}
-        onOpenChange={setShowNewSizeModal}
+        open={productoFormState.showNewSizeModal}
+        onOpenChange={() => dispatch({type: 'CLOSE_SIZE_MODAL'})}
         existingSizes={sizesWatch}
         onSizeAdded={handleSubmitNewSize}
       >

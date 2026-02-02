@@ -39,7 +39,6 @@ export const NewSizeModal = ({ open = true, onOpenChange, onSizeAdded, existingS
 
 
     const handleSubmitLocal = (size: Size) => {
-        console.log('handleSubmitLocal: ', size)
         onSizeAdded(size);
         reset();
         onOpenChange(false);
