@@ -21,8 +21,8 @@ export const ProductoCard = ({ producto }: productoCardProps) => {
     const navigate = useNavigate();
 
     return (
-        <div className="cursor-pointer card-elevated overflow-hidden group animate-slide-up hover:shadow-lg transition-shadow duration-300 shadow-md">
-            <div className="aspect-[4/3] bg-muted relative overflow-hidden">
+        <div className="cursor-pointer card-elevated overflow-hidden group animate-slide-up hover:shadow-lg transition-shadow duration-300 shadow-md rounded-2xl">
+            <div className="aspect-4/3 bg-muted relative overflow-hidden">
                 {producto.imagen ? (
                     <img
                         src={producto.imagen}

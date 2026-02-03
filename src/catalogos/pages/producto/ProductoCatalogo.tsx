@@ -12,7 +12,7 @@ const ProductoCatalogo = () => {
   const title = (id === 'new' ? 'Registrar nuevo producto':'Actualizar producto');
   const subTitle = (id === 'new' ? 'Aqui puedes registrar un nuevo producto':'Aqui puedes actualizar tu producto');
 
-  const handleSubmit = async (productoLike: Partial<Producto>) => {
+  const handleSubmit = async (productoLike: Partial<Producto> & {file?: File}) => {
     mutation.mutate(productoLike, {
       onSuccess: (producto) => {
         toast.success(`Producto ${id === 'new' ? 'creado' : 'actualizado'} correctamente`, {position: 'top-right'});

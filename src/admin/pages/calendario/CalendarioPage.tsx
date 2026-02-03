@@ -60,7 +60,7 @@ export default function OrderCalendar() {
             {ordersOnSelectedDate.length > 0 ? (
               <div className="space-y-4">
                 {ordersOnSelectedDate.map((order) => (
-                  <CustomPedidoCard pedido={order}></CustomPedidoCard>
+                  <CustomPedidoCard key={order.id} pedido={order}></CustomPedidoCard>
                 ))}
               </div>
             ) : (

@@ -9,10 +9,14 @@ interface Props{
     producto: Producto,
     onSubmit: (productoLike: Partial<Producto>) => Promise<void>
 }
+
+interface FormInputs extends Producto {
+  file?: File
+}
 export const useProductoForm = ({producto, onSubmit}:Props) => {
   const { data: categories, mutation: mutationCatetory } = useCategories();
   const [productoFormState, dispatch] = useReducer(useProductoFormReducer, getTaskProductoFormInitialState());
-  const form = useForm<Producto>({
+  const form = useForm<FormInputs>({
     defaultValues: producto
   });
   const categoryWatch = form.watch('category');
@@ -28,13 +32,16 @@ export const useProductoForm = ({producto, onSubmit}:Props) => {
       form.setError('sizes', { message: 'Se requere minimo un tamaño y precio' })
       return;
     };
+    console.log(productoLike)
     onSubmit(productoLike);
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
+    console.log(files[0])
     dispatch({type:'SET_IMAGE', payload: files[0]})
+    form.setValue('file', files[0]);
   }
 
   const handleSubmitedNewCatery = async (categoryLike: Partial<Category>) => {

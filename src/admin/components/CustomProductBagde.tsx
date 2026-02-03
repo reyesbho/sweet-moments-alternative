@@ -17,11 +17,11 @@ export const CustomProductBagde = ({productoPedido, onRemove, onIncreaseQuantity
         <Card className="p-3">
             <div className="flex gap-3">
                 {/* Thumbnail */}
-                <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-muted">
+                <div className="w-14 h-14 rounded-lg bg-muted">
                     <img
                         src={producto?.imagen || '/placeholder.svg'}
                         alt={producto.name}
-                        className="w-30 h-30 object-cover"
+                        className="w-14 h-14 object-cover aspect-square rounded-2xl"
                     />
                 </div>
 
@@ -29,7 +29,10 @@ export const CustomProductBagde = ({productoPedido, onRemove, onIncreaseQuantity
                 <div className="flex-1 min-w-0">
                     <h4 className="font-medium text-sm truncate">{producto.name}</h4>
                     <p className="text-xs text-muted-foreground">
-                        {formatCurrency(productoPedido.size.price || 0)} c/u
+                        {size.size} - {formatCurrency(size.price || 0)} c/u
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                        {caracteristicas}
                     </p>
 
                     {/* Quantity Controls */}
@@ -68,7 +71,7 @@ export const CustomProductBagde = ({productoPedido, onRemove, onIncreaseQuantity
                         <Trash2 className="h-4 w-4" />
                     </Button>
                     <span className="font-semibold text-sm">
-                        {formatCurrency(productoPedido.subtotal)}
+                        {formatCurrency(subtotal)}
                     </span>
                 </div>
             </div>
