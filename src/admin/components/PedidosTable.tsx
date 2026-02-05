@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/format-currency";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { useNavigate } from "react-router";
 import { CustomStatusBadge } from "./CustomStatusBadge";
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import type { Pedido } from "@/interfaces/pedidos-response";
 import { formatDateStringFromTimestamp } from "@/lib/format-date";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export const PedidosTable = ({pedidos}:{pedidos:Pedido[]}) => {
     
@@ -30,7 +30,7 @@ export const PedidosTable = ({pedidos}:{pedidos:Pedido[]}) => {
                             key={order.id}
                             className="hover:bg-muted/50 cursor-pointer animate-fade-in border-border"
                             style={{ animationDelay: `${index * 50}ms` }}
-                            onClick={() => navigate(`/pedidos/${order.id}`)}
+                            onClick={() => navigate(`/pedidos/detail/${order.id}`)}
                         >
                             <TableCell>
                                 <div>
@@ -68,24 +68,17 @@ export const PedidosTable = ({pedidos}:{pedidos:Pedido[]}) => {
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem onClick={(e) => {
                                             e.stopPropagation();
-                                            navigate(`/pedidos/${order.id}`);
+                                            navigate(`/pedidos/detail/${order.id}`);
                                         }}>
                                             <Eye className="w-4 h-4 mr-2" />
                                             Ver detalle
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={(e) => {
                                             e.stopPropagation();
-                                            navigate(`/pedidos/${order.id}/editar`);
+                                            navigate(`/pedidos/${order.id}`);
                                         }}>
                                             <Edit className="w-4 h-4 mr-2" />
                                             Editar
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            className="text-destructive"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <Trash2 className="w-4 h-4 mr-2" />
-                                            Eliminar
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>

@@ -1,4 +1,4 @@
-import { CustomProductBagde } from "@/admin/components/CustomProductBagde";
+import { CustomProductoPedidoBagde } from "@/admin/components/CustomProductoPedidoBagde";
 import { CustomProductSelector } from "@/admin/components/CustomProductSelector";
 import { ProductConfigModal } from "@/admin/components/ProductConfigModal";
 import { getTasksProductoPedidoInitialState, tasksProductosPedidosReducer } from "@/admin/hook/reducer/tasksProductosPedido";
@@ -224,12 +224,13 @@ export const PedidoForm = ({ pedido, isPending, onSubmit }: Props) => {
                                 <div className="space-y-3">
                                     {state.productos.map((item, index) => {
                                         return (
-                                            <CustomProductBagde
+                                            <CustomProductoPedidoBagde
                                                 key={index} productoPedido={item}
                                                 onRemove={() => dispatch({ type: 'REMOVE_PRODUCTO', payload: item.id })}
                                                 onIncreaseQuantity={() => dispatch({ type: 'INCREASE_QUANTITY', payload: item.id })}
                                                 onDecreaseQuantity={() => dispatch({ type: 'DECREASE_QUEANTITY', payload: item.id })}
-                                            ></CustomProductBagde>
+                                                mode="edit"
+                                            ></CustomProductoPedidoBagde>
                                         );
                                     })}
 

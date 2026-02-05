@@ -5,12 +5,13 @@ import PedidoPage from "./admin/pages/pedido/PedidoPage";
 import CalendarioPage from "./admin/pages/calendario/CalendarioPage";
 import AdminLayout from "./admin/layouts/AdminLayout";
 import ProductosCatalogoPage from "./catalogos/pages/productos/ProductosCatalogoPage";
-import ProductoCatalogo from "./catalogos/pages/producto/ProductoCatalogo";
+import ProductoCatalogo from "./catalogos/pages/producto/ProductoCatalogoPage";
 import { lazy } from "react";
 import AuthLayout from "./auth/layouts/AuthLayout";
 import { LoginPage } from "./auth/pages/login/LoginPage";
 import { RegisterPage } from "./auth/pages/register/RegisterPage";
 import { AdminRoute, NotAuthenticatedRoutes } from "./components/custom/routes/ProtectedRoutes";
+import { PedidoDetail } from "./admin/pages/pedido/PedidoDetail";
 
 const CatalogosLayout = lazy(() => import("./catalogos/layouts/CatalogosLayout"));
 
@@ -44,6 +45,10 @@ export const appRouter = createBrowserRouter([
             {
                 path:'pedidos/:id',
                 element: <PedidoPage></PedidoPage>
+            },
+            {
+                path:'pedidos/detail/:id',
+                element: <PedidoDetail></PedidoDetail>
             },
             {
                 path:'calendario',

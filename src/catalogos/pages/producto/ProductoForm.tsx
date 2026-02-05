@@ -24,28 +24,28 @@ interface Props {
 export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
   const navigate = useNavigate();
   const {
-    dispatch, 
-    sizesWatch, 
-    categoryWatch, 
-    categories, 
-    handleSubmitLocal, 
+    dispatch,
+    sizesWatch,
+    categoryWatch,
+    categories,
+    handleSubmitLocal,
     productoFormState,
-    handleFileChange, 
+    handleFileChange,
     handleSubmitedNewCatery,
     handleSubmitNewSize,
-    handleSelectCategory, 
-    form:{handleSubmit, register, formState:{errors}, control}
-  } = useProductoForm({producto, onSubmit});
+    handleSelectCategory,
+    form: { handleSubmit, register, formState: { errors }, control }
+  } = useProductoForm({ producto, onSubmit });
 
   return (
     <>
-      <form onSubmit={handleSubmit(handleSubmitLocal)} className="space-y-6">
+      <form onSubmit={handleSubmit(handleSubmitLocal)} className="space-y-6 md:grid md:grid-cols-2 md:gap-3.5">
         {/* Image Upload */}
         <div className="card-elevated p-6 shadow-md border-solid border-2 rounded-2xl">
           <Label className="text-base font-display font-semibold mb-4 block">
             Imagen del Producto
           </Label>
-          <div className="flex items-start gap-6">
+          <div className="flex flex-col items-center gap-6">
             <div className="w-40 h-40 rounded-xl border-2 border-dashed border-border bg-muted/50 overflow-hidden flex items-center justify-center">
               {productoFormState.selectedImage ?
                 (<img
@@ -111,28 +111,28 @@ export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="sizes">Tamaños y precios</Label>
-              <Button type="button" onClick={() => dispatch({type:"OPEN_SIZE_MODAL"})}>+ Agregar tamaño y precio</Button>
+              <Button type="button" onClick={() => dispatch({ type: "OPEN_SIZE_MODAL" })}>+ Agregar tamaño y precio</Button>
               <div className="flex flex-row gap-3 flex-wrap">
                 {sizesWatch.length > 0 && sizesWatch.map(size => (
                   <SizeBadge key={size.size} size={size} ></SizeBadge>
                 ))}
               </div>
             </div>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label>Categoría *</Label>
-                  <Button className="text-sm" type="button" onClick={() => dispatch({type: 'OPEN_CATEGORY_MODAL'})}> + Nueva categoria</Button>
-                </div>
-                <ErroItem error={errors.category}></ErroItem>
-                <div className="flex flex-row flex-wrap gap-1">
-                  {categories && categories.map(cat => {
-                    const isSelected = categoryWatch === cat.descripcion;
-                    return (
-                      <Badge key={cat.id} className="cursor-pointer py-2" variant={isSelected ? 'default' : 'outline'} onClick={() => handleSelectCategory(cat)} >{cat.descripcion}</Badge>
-                    )
-                  })}
-                </div>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <Label>Categoría *</Label>
+                <Button className="text-sm" type="button" onClick={() => dispatch({ type: 'OPEN_CATEGORY_MODAL' })}> + Nueva categoria</Button>
               </div>
+              <ErroItem error={errors.category}></ErroItem>
+              <div className="flex flex-row flex-wrap gap-1">
+                {categories && categories.map(cat => {
+                  const isSelected = categoryWatch === cat.descripcion;
+                  return (
+                    <Badge key={cat.id} className="cursor-pointer py-2" variant={isSelected ? 'default' : 'outline'} onClick={() => handleSelectCategory(cat)} >{cat.descripcion}</Badge>
+                  )
+                })}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -165,7 +165,7 @@ export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end gap-4 ">
+        <div className="flex justify-end items-end gap-4 ">
           <Button type="button" variant="outline" onClick={() => navigate('/productos')}>
             Cancelar
           </Button>
@@ -176,13 +176,13 @@ export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
       </form>
       <NewCategoryModal
         open={productoFormState.showNewCategoryModal}
-        onOpenChange={() => dispatch({type: 'CLOSE_CATEGORY_MODAL'})}
+        onOpenChange={() => dispatch({ type: 'CLOSE_CATEGORY_MODAL' })}
         existingCategories={categories || []}
         onCategoryCreated={handleSubmitedNewCatery}
       />
       <NewSizeModal
         open={productoFormState.showNewSizeModal}
-        onOpenChange={() => dispatch({type: 'CLOSE_SIZE_MODAL'})}
+        onOpenChange={() => dispatch({ type: 'CLOSE_SIZE_MODAL' })}
         existingSizes={sizesWatch}
         onSizeAdded={handleSubmitNewSize}
       >

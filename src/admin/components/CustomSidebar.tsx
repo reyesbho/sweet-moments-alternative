@@ -36,14 +36,14 @@ export function CustomSidebar() {
 
     const {logout} = useAuthStore()
     return (
-        <Sidebar className="">
+        <Sidebar >
             <SidebarHeader className="items-center">
                 <img className="w-20 h-20" src={logo}></img>
-                <h1 className="font-cursive text-2xl ">Sweet Moments</h1>
+                <h1 className="font-cursive text-3xl ">Dulces momentos</h1>
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup className="py-5">
-                    <SidebarGroupLabel className="text-1xl bold text-gray-600 py-5">PEDIDOS</SidebarGroupLabel>
+                    <SidebarGroupLabel className="text-1xl font-bold  py-5">PEDIDOS</SidebarGroupLabel>
                     <SidebarGroupContent>
                         {
                             menusPedidos.map(menu => (
@@ -63,7 +63,7 @@ export function CustomSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
                 <SidebarGroup className="py-5">
-                    <SidebarGroupLabel className="text-1xl bold text-gray-600 py-5">CATALOGOS</SidebarGroupLabel>
+                    <SidebarGroupLabel className="text-1xl font-bold py-5">CATALOGOS</SidebarGroupLabel>
                     <SidebarGroupContent>
                         {
                             menusCatalogos.map(menu => (

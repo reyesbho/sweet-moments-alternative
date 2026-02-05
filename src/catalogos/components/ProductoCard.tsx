@@ -40,8 +40,8 @@ export const ProductoCard = ({ producto }: productoCardProps) => {
                         className={cn(
                             'font-medium',
                             producto.estatus
-                                ? 'bg-status-delivered-bg text-status-delivered'
-                                : 'bg-status-cancelled-bg text-status-cancelled'
+                                ? 'bg-status-done '
+                                : 'bg-status-delete '
                         )}
                     >
                         {producto.estatus ? 'Disponible' : 'No disponible'}
@@ -84,8 +84,10 @@ export const ProductoCard = ({ producto }: productoCardProps) => {
                 <div className="flex flex-row flex-wrap gap-2 my-2">
                     {producto.sizes.map(size => (
                         <div key={size.size} className="flex flex-col gap-1 items-center">
-                            <Label>{size.size}</Label>
-                            <Badge className="bg-gray-200 text-black font-bold">{formatCurrency(size.price ?? 0)}</Badge>
+                            <Badge className="bg-amber-300 text-black ">
+                                <p>{size.size}</p>
+                                <p>{formatCurrency(size.price ?? 0)}</p>
+                            </Badge>
                         </div>
                     ))}
                 </div>

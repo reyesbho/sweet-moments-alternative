@@ -7,11 +7,12 @@ import { Minus, Plus, Trash2 } from "lucide-react"
 
 interface Props{
     productoPedido: ProductoPedido,
-    onRemove: (producPedido: ProductoPedido) => void,
-    onIncreaseQuantity: (id: string) => void,
-    onDecreaseQuantity: (id: string) => void
+    onRemove?: (producPedido: ProductoPedido) => void,
+    onIncreaseQuantity?: (id: string) => void,
+    onDecreaseQuantity?: (id: string) => void,
+    mode?: 'view' | 'edit'
 }
-export const CustomProductBagde = ({productoPedido, onRemove, onIncreaseQuantity, onDecreaseQuantity }:Props) => {
+export const CustomProductoPedidoBagde = ({productoPedido, onRemove = () => {}, onIncreaseQuantity = () => {}, onDecreaseQuantity=() => {}, mode = 'view' }:Props) => {
     const {cantidad, caracteristicas,subtotal, size,producto} = productoPedido;
     return (
         <Card className="p-3">
@@ -31,11 +32,15 @@ export const CustomProductBagde = ({productoPedido, onRemove, onIncreaseQuantity
                     <p className="text-xs text-muted-foreground">
                         {size.size} - {formatCurrency(size.price || 0)} c/u
                     </p>
+                    {mode === 'view' && 
+                    <p className="text-xs text-muted-foreground">Cantidad {productoPedido.cantidad}</p>
+                    }
                     <p className="text-xs text-muted-foreground">
                         {caracteristicas}
                     </p>
 
                     {/* Quantity Controls */}
+                    {mode === 'edit' && 
                     <div className="flex items-center gap-2 mt-1.5">
                         <Button
                             type="button"
@@ -56,11 +61,12 @@ export const CustomProductBagde = ({productoPedido, onRemove, onIncreaseQuantity
                         >
                             <Plus className="h-3 w-3" />
                         </Button>
-                    </div>
+                    </div>}
                 </div>
 
                 {/* Subtotal & Remove */}
                 <div className="flex flex-col items-end justify-between">
+                    {mode === 'edit' && 
                     <Button
                         type="button"
                         variant="ghost"
@@ -69,7 +75,7 @@ export const CustomProductBagde = ({productoPedido, onRemove, onIncreaseQuantity
                         onClick={() => onRemove(productoPedido)}
                     >
                         <Trash2 className="h-4 w-4" />
-                    </Button>
+                    </Button>}
                     <span className="font-semibold text-sm">
                         {formatCurrency(subtotal)}
                     </span>

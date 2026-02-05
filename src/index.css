@@ -84,17 +84,31 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar: #8f6304;
+  --sidebar-foreground: oklch(98.452% 0.00746 16.459);
+  --sidebar-primary: oklch(100% 0.00011 271.152);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-accent: #7e5a0d;
+  --sidebar-accent-foreground: oklch(100% 0.00011 271.152);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-ring: oklch(50.126% 0.15422 24.603);
 }
 
 .dark {
+  /* Custom colors for order status */
+  --status-delete: 45, 2%, 47%;
+  --status-delete-bg: 60, 4%, 85%;
+  --status-backlog: 59, 83%, 65%;
+  --status-backlog-bg: 59, 58%, 82%;
+  --status-pending: 32 95% 55%;
+  --status-pending-bg: 32 95% 95%;
+  --status-delivered: 130, 68%, 46%;
+  --status-delivered-bg: 158, 66%, 87%;
+  --status-cancelled: 0 65% 55%;
+  --status-cancelled-bg: 0 65% 95%;
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -143,7 +157,7 @@
   }
 }
 
-@theme {
+@theme inline {
   --font-cursive: "Pacifico", cursive;
 }
 
