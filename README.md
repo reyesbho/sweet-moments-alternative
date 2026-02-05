@@ -1,73 +1,127 @@
-# React + TypeScript + Vite
+# Sweet Moments - Sistema de Gestión de Pedidos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web moderna para la gestión de pedidos y catálogo de productos, construida con React, TypeScript, Vite y Firebase.
 
-Currently, two official plugins are available:
+## 📋 Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Autenticación**: Sistema de login y registro integrado con Firebase
+- **Panel Administrativo**: Dashboard completo para gestión de pedidos
+- **Catálogo de Productos**: Administración de productos y categorías
+- **Gestión de Pedidos**: Crear, editar, visualizar y gestionar pedidos
+- **Calendario**: Vista de pedidos en calendario
+- **Filtros Avanzados**: Búsqueda y filtrado de pedidos
+- **Interfaz Responsiva**: Diseño adaptable para diferentes dispositivos
 
-## React Compiler
+## 🛠️ Tecnologías
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+### Frontend
+- **React** 19.2.0 - Librería de interfaz de usuario
+- **TypeScript** - Tipado estático
+- **Vite** - Empaquetador y servidor de desarrollo
+- **React Router** 7.12.0 - Enrutamiento
+- **TailwindCSS** 4.1.18 - Estilos CSS
+- **Radix UI** - Componentes accesibles sin estilos
 
-## Expanding the ESLint configuration
+### Estado y Datos
+- **Zustand** 5.0.10 - Gestión de estado
+- **React Query** 5.90.17 - Gestión de datos y caché
+- **React Hook Form** 7.71.1 - Gestión de formularios
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Backend/Base de Datos
+- **Firebase** 12.8.0 - Base de datos y autenticación
+- **Firebase Admin** 13.6.0 - Administración del servidor
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Utilidades
+- **Axios** 1.13.2 - Cliente HTTP
+- **date-fns** 4.1.0 - Manipulación de fechas
+- **UUID** 13.0.0 - Generación de identificadores únicos
+- **Sonner** 2.0.7 - Notificaciones toast
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 📁 Estructura del Proyecto
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── admin/                  # Módulo de administración
+│   ├── actions/           # Acciones para obtener datos
+│   ├── components/        # Componentes del admin
+│   ├── hooks/            # Hooks personalizados
+│   ├── layouts/          # Layouts del admin
+│   └── pages/            # Páginas (home, pedidos, calendario)
+├── auth/                  # Módulo de autenticación
+│   ├── actions/          # Acciones de auth
+│   ├── pages/            # Login y registro
+│   ├── store/            # Zustand store de auth
+│   └── layouts/          # Layout de autenticación
+├── catalogos/             # Módulo de catálogo
+│   ├── actions/          # Acciones de catálogo
+│   ├── components/       # Componentes de catálogo
+│   ├── hooks/            # Hooks de catálogo
+│   └── pages/            # Páginas de productos
+├── components/            # Componentes globales
+│   ├── custom/           # Componentes personalizados
+│   └── ui/               # Componentes UI reutilizables
+├── interfaces/            # Tipos e interfaces TypeScript
+├── lib/                   # Funciones utilitarias
+├── api/                   # Configuración de API
+└── assets/               # Recursos estáticos
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Instalación y Uso
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Requisitos Previos
+- Node.js 16+ y npm/yarn
+- Cuenta de Firebase
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Instalación
+
+```bash
+# Clonar el repositorio
+git clone <repository-url>
+
+# Instalar dependencias
+npm install
+
+# Crear archivo .env con configuración de Firebase
+echo "VITE_FIREBASE_API_KEY=..." > .env
+echo "VITE_FIREBASE_AUTH_DOMAIN=..." >> .env
+# ... agregar resto de variables
 ```
+
+### Desarrollo
+
+```bash
+# Iniciar servidor de desarrollo
+npm run dev
+
+# Compilar verificaciones de tipo
+npm run build
+
+# Linter
+npm run lint
+
+# Vista previa de producción
+npm run preview
+```
+
+## 📝 Flujo de la Aplicación
+
+1. **Autenticación**: Usuario inicia sesión o se registra
+2. **Dashboard**: Acceso al panel administrativo
+3. **Gestión de Pedidos**: Ver, crear y editar pedidos
+4. **Catálogo**: Administrar productos y categorías
+5. **Calendario**: Visualizar pedidos por fecha
+
+## 🔐 Autenticación
+
+La aplicación utiliza Firebase para la autenticación. El estado se gestiona con Zustand y se verifica automáticamente al cargar la aplicación.
+
+## 📦 Scripts Disponibles
+
+- `npm run dev` - Inicia el servidor de desarrollo
+- `npm run build` - Compila TypeScript y genera build de producción
+- `npm run lint` - Ejecuta ESLint
+- `npm run preview` - Vista previa del build de producción
+
+## 📄 Licencia
+
+Proyecto privado.
