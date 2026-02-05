@@ -30,13 +30,9 @@ export const useAuthStore = create<Auth>()((set, get) => ({
     authStatus: 'checking',
     // TODO cambiar 
     isAdmin: () => true,
-    // isAdmin: () => {
-    //     const roles = get().user?.roles || [];
-    //     return roles.includes('admin');
-    // },
     register: async (email: string, password: string, fullName) => {
         try {
-            const data = await registerAction(email, password, fullName);
+            const data = await registerAction(email, password);
             set({ user: {email, displayName: fullName}, token: data.accessToken, authStatus: 'Authenticated'});
             return true;
         } catch (error) {

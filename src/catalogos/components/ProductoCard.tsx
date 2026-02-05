@@ -10,7 +10,6 @@ import {
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router';
 import type { Producto } from '@/interfaces/producto';
-import { Label } from '@/components/ui/label';
 import { formatCurrency } from '@/lib/format-currency';
 
 interface productoCardProps {

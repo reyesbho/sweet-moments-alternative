@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { authMomentsAction } from "./login.action";
 import { logoutAction } from "./logout.action";
 
-export const registerAction = async (email: string, password: string, fullName: string): Promise<AuthResponse> => {
+export const registerAction = async (email: string, password: string): Promise<AuthResponse> => {
     try {
         const userCredentials = await createUserWithEmailAndPassword(
             authFirebase,
