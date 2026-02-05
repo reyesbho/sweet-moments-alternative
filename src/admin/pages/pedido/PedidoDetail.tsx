@@ -22,7 +22,7 @@ export const PedidoDetail = () => {
 
     if (!pedido) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[400px] animate-fade-in">
+            <div className="flex flex-col items-center justify-center min-h-100 animate-fade-in">
                 <p className="text-muted-foreground text-lg">Pedido no encontrado</p>
                 <Button variant="ghost" onClick={() => navigate('/pedidos')} className="mt-4">
                     <ArrowLeft className="w-4 h-4 mr-2" />
