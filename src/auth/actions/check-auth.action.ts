@@ -4,39 +4,32 @@ import { authFirebase } from "@/firebase";
 import { authMomentsAction } from "./login.action";
 import { logoutAction } from "./logout.action";
 
-export const checkAuthAction = async (): Promise<AuthResponse> => {
-    return new Promise((resolve, reject) => {
-        try {
-            onAuthStateChanged(authFirebase, async (user) => {
-                if (user) {
-                    const authUser = {
-                        accessToken: await user.getIdToken(),
-                        displayName: user.displayName ?? '',
-                        email: user.email ?? '',
-                        emailVerified: user.emailVerified,
-                        uid: user.uid
-                    } as AuthResponse;
-                    //auth backend
-                    try {
-                        const response = await authMomentsAction(authUser);
-                        if (response.status !== 200) {
-                            logoutAction();
-                            throw new Error('Error al authenticarse')
-                        }
-                    } catch {
-                        logoutAction();
-                        throw new Error('Error al authenticarse')
-                    }
-
-                    resolve(authUser);
-
-
-                } else {
-                    reject(new Error('Token not valid'));
+export const checkAuthAction = (): Promise<AuthResponse | null> => {
+    return new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(authFirebase, async (user) => {
+            unsubscribe();
+            if (!user) {
+                return resolve(null);
+            }
+            try {
+                const authUser: AuthResponse = {
+                    accessToken: await user.getIdToken(),
+                    displayName: user.displayName ?? '',
+                    email: user.email ?? '',
+                    emailVerified: user.emailVerified,
+                    uid: user.uid,
+                };
+                // 🔥 VALIDAR CON BACKEND
+                const response = await authMomentsAction(authUser);
+                if (response.status !== 200) {
+                    await logoutAction();
+                    return resolve(null);
                 }
-            });
-        } catch (error) {
-            reject(new Error('Token not valid'));
-        }
+                resolve(authUser);
+            } catch {
+                await logoutAction();
+                resolve(null);
+            }
+        });
     });
 }

@@ -7,11 +7,13 @@ const momentsApi = axios.create({
 })
 
 // RESPONSE (AQUÍ va el logout)
+// useAuthStore.getState() en lugar de useAuthStore() porque los interceptores
+// de Axios no son componentes React y no pueden llamar hooks directamente
 momentsApi.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const {logout} = useAuthStore()
     if (error.response?.status === 401) {
+      const { logout } = useAuthStore.getState();
       await logout();
     }
 

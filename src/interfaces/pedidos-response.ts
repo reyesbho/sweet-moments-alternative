@@ -10,9 +10,15 @@ export interface PedidosResponse {
     pageSize: number
 }
 
+export interface Abono {
+    monto: number;
+    fecha: Timestamp;
+}
+
 export interface Pedido {
     id:            string;
     estatusPago:   EstatusPago;
+    tipoPago?:     TipoPago;
     cliente:       string;
     estatus:       EstatusPedido;
     fechaEntrega:  Timestamp;
@@ -21,8 +27,8 @@ export interface Pedido {
     fechaCreacion: Timestamp;
     lugarEntrega:  string;
     productos:     ProductoPedido[];
-    detalles: string,
-    abonado?:number
+    detalles:      string;
+    abonos?:       Abono[];
 }
 
 
@@ -39,6 +45,8 @@ export interface ProductoPedido {
 
 export type EstatusPedido = 'BACKLOG' | 'DONE' | 'TODO' | 'CANCELED' | 'DELETE';
 export type EstatusPago = 'PENDIENTE' | 'PAGADO' | 'ABONADO';
+export type TipoPago = 'EFECTIVO' | 'TRANSFERENCIA';
+
 export const ESTATUS_PEDIDO = [
   'BACKLOG',
   'DONE',
