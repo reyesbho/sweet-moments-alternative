@@ -21,6 +21,7 @@ export const PedidosTable = ({pedidos}:{pedidos:Pedido[]}) => {
                         <TableHead className="font-semibold text-foreground">Productos</TableHead>
                         <TableHead className="font-semibold text-foreground">Total</TableHead>
                         <TableHead className="font-semibold text-foreground">Estado</TableHead>
+                        <TableHead className="font-semibold text-foreground">Pago</TableHead>
                         <TableHead className="font-semibold text-foreground text-right">Acciones</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -57,6 +58,20 @@ export const PedidosTable = ({pedidos}:{pedidos:Pedido[]}) => {
                             </TableCell>
                             <TableCell>
                                 <CustomStatusBadge status={order.estatus} />
+                            </TableCell>
+                            <TableCell>
+                                <div className="flex flex-col gap-1">
+                                    <span className={`inline-flex w-fit items-center rounded-full px-2 py-0.5 text-xs font-medium
+                                        ${order.estatusPago === 'PAGADO'    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : ''}
+                                        ${order.estatusPago === 'ABONADO'   ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'     : ''}
+                                        ${order.estatusPago === 'PENDIENTE' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' : ''}
+                                    `}>
+                                        {order.estatusPago}
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">
+                                        {order.tipoPago ?? 'EFECTIVO'}
+                                    </span>
+                                </div>
                             </TableCell>
                             <TableCell className="text-right">
                                 <DropdownMenu>

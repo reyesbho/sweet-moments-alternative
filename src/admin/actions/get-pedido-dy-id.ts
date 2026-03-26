@@ -11,7 +11,10 @@ export const getPedidoByIdAction = async (id: string): Promise<Pedido> => {
             productos: [],
             detalles: '',
             total: 0,
-            lugarEntrega: ''
+            lugarEntrega: '',
+            estatus: 'TODO',
+            estatusPago: 'PENDIENTE',
+            abonos: [],
         } as unknown as Pedido;
     }
 

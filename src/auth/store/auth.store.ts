@@ -24,7 +24,7 @@ type Auth = {
     checkAuthStatus: () => Promise<boolean>
 }
 
-export const useAuthStore = create<Auth>()((set, get) => ({
+export const useAuthStore = create<Auth>()((set) => ({
     user: null,
     token: null,
     authStatus: 'checking',
@@ -57,13 +57,12 @@ export const useAuthStore = create<Auth>()((set, get) => ({
         set({ user: null, token: null, authStatus:'not-authenticated'});
     },
     checkAuthStatus: async() => {
-        try{
-            const {accessToken} = await checkAuthAction();
-            set({ user:get().user , token: accessToken, authStatus: 'Authenticated'});
-            return true;
-        }catch(error){
-            set({ user: undefined, token: undefined, authStatus: 'not-authenticated'});
+        const data = await checkAuthAction();
+        if (!data) {
+            set({ user: null, token: null, authStatus: 'not-authenticated'});
             return false;
         }
+        set({ user: { email: data.email, displayName: data.displayName }, token: data.accessToken, authStatus: 'Authenticated'});
+        return true;
     }
 }))

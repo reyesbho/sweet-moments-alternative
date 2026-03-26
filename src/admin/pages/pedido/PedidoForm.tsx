@@ -1,3 +1,4 @@
+import { AbonosModal } from "@/admin/components/AbonosModal";
 import { CustomProductoPedidoBagde } from "@/admin/components/CustomProductoPedidoBagde";
 import { CustomProductSelector } from "@/admin/components/CustomProductSelector";
 import { ProductConfigModal } from "@/admin/components/ProductConfigModal";
@@ -9,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import type { Pedido, ProductoPedido } from "@/interfaces/pedidos-response";
+import type { Abono, Pedido, ProductoPedido } from "@/interfaces/pedidos-response";
 import type { Producto } from "@/interfaces/producto";
 import { formatCurrency } from "@/lib/format-currency";
 import { addHourToDate, formatDateFromTimestamp, getHourFromDate } from "@/lib/format-date";
@@ -17,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { Popover, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CalendarIcon, ShoppingBag } from "lucide-react";
+import { CalendarIcon, ShoppingBag, Wallet } from "lucide-react";
 import { useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
@@ -38,6 +39,8 @@ export const PedidoForm = ({ pedido, isPending, onSubmit }: Props) => {
     const [selectedDate, setSeletedDate] = useState(formatDateFromTimestamp(pedido.fechaEntrega));
     const [selectedProduct, setSelectedProduct] = useState<Producto | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAbonosModalOpen, setIsAbonosModalOpen] = useState(false);
+    const [abonos, setAbonos] = useState<Abono[]>(pedido.abonos ?? []);
     const navigate = useNavigate();
 
     const { register, handleSubmit, formState: { errors }, control } = useForm<InputsFormPedido>({
@@ -63,9 +66,16 @@ export const PedidoForm = ({ pedido, isPending, onSubmit }: Props) => {
         dispatch({ type: 'ADD_PRODUCTO', payload: productoPedido })
     }
 
-    const handleSubmitLocal = (pedidoLike:InputsFormPedido) => {
-        const newFechaHoraEntrega = addHourToDate(selectedDate, pedidoLike.selectedHour);
-        const newPedido:Partial<Pedido> = {...pedidoLike, productos: state.productos, fechaEntrega: Timestamp.fromDate(newFechaHoraEntrega), total: state.total};
+    const handleSubmitLocal = (pedidoLike: InputsFormPedido) => {
+        const { selectedHour, ...pedidoData } = pedidoLike;
+        const newFechaHoraEntrega = addHourToDate(selectedDate, selectedHour);
+        const newPedido: Partial<Pedido> = {
+            ...pedidoData,
+            productos: state.productos,
+            fechaEntrega: Timestamp.fromDate(newFechaHoraEntrega),
+            total: state.total,
+            abonos
+        };
         onSubmit(newPedido);
     }
     return (
@@ -208,7 +218,85 @@ export const PedidoForm = ({ pedido, isPending, onSubmit }: Props) => {
                                             </Select>
                                         )}
                                     />
-
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Tipo de pago</Label>
+                                    <Controller
+                                        name="tipoPago"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Select
+                                                value={field.value ?? ''}
+                                                onValueChange={field.onChange}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Selecciona tipo" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="EFECTIVO">Efectivo</SelectItem>
+                                                    <SelectItem value="TRANSFERENCIA">Transferencia</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        )}
+                                    />
+                                </div>
+                                <div className="space-y-2 md:col-span-2">
+                                    <div className="flex items-center justify-between">
+                                        <Label>Abonos</Label>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            className="flex items-center gap-1"
+                                            onClick={() => setIsAbonosModalOpen(true)}
+                                        >
+                                            <Wallet className="h-3.5 w-3.5" />
+                                            Registrar abono
+                                        </Button>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-2 text-center text-sm">
+                                        <div className="bg-muted rounded-lg p-2">
+                                            <p className="text-muted-foreground text-xs">Total</p>
+                                            <p className="font-semibold">{formatCurrency(state.total)}</p>
+                                        </div>
+                                        <div className="bg-muted rounded-lg p-2">
+                                            <p className="text-muted-foreground text-xs">Abonado</p>
+                                            <p className="font-semibold text-green-600">{formatCurrency(abonos.reduce((acc, a) => acc + a.monto, 0))}</p>
+                                        </div>
+                                        <div className="bg-muted rounded-lg p-2">
+                                            <p className="text-muted-foreground text-xs">Restante</p>
+                                            <p className="font-semibold text-orange-500">{formatCurrency(state.total - abonos.reduce((acc, a) => acc + a.monto, 0))}</p>
+                                        </div>
+                                    </div>
+                                    {abonos.length > 0 ? (
+                                        <div className="space-y-2 rounded-lg border p-3">
+                                            {abonos.map((abono, index) => (
+                                                <div key={index} className="flex items-center justify-between text-sm">
+                                                    <span className="text-muted-foreground">
+                                                        {new Date(abono.fecha.seconds * 1000).toLocaleDateString('es-MX')}
+                                                    </span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-medium">{formatCurrency(abono.monto)}</span>
+                                                        <button
+                                                            type="button"
+                                                            className="text-destructive hover:text-destructive/80 text-xs"
+                                                            onClick={() => setAbonos(prev => prev.filter((_, i) => i !== index))}
+                                                        >
+                                                            ✕
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            <div className="flex justify-between pt-2 border-t text-sm font-semibold">
+                                                <span>Total abonado</span>
+                                                <span className="text-green-600">
+                                                    {formatCurrency(abonos.reduce((acc, a) => acc + a.monto, 0))}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">Sin abonos registrados</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -293,6 +381,11 @@ export const PedidoForm = ({ pedido, isPending, onSubmit }: Props) => {
                     onConfirm={handleConfirmProduct}
                 />
             }
+            <AbonosModal
+                open={isAbonosModalOpen}
+                onClose={() => setIsAbonosModalOpen(false)}
+                onAgregar={(nuevoAbono) => setAbonos(prev => [...prev, nuevoAbono])}
+            />
         </>
     )
 }
