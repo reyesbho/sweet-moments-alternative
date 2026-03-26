@@ -26,3 +26,6 @@ dist-ssr
 .env
 .env.development
 .env.production
+backup.js
+.claude/settings.local.json
+firestore-backup.json
