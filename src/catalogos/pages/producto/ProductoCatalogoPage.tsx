@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 
 const ProductoCatalogo = () => {
   const { id } = useParams();
-  const { data: producto, isPending, mutation } = useProducto(id || '');
+  const { data: producto, mutation } = useProducto(id || '');
   const navigate = useNavigate();
   const title = (id === 'new' ? 'Registrar nuevo producto' : 'Actualizar producto');
   const subTitle = (id === 'new' ? 'Aqui puedes registrar un nuevo producto' : 'Aqui puedes actualizar tu producto');
@@ -34,7 +34,7 @@ const ProductoCatalogo = () => {
       <div className=' flex flex-col items-center'>
         <ProductoForm
           producto={producto}
-          isPending={isPending}
+          isPending={mutation.isPending}
           onSubmit={handleSubmit}
         ></ProductoForm>
       </div>

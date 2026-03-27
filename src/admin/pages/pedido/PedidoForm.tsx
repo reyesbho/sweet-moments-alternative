@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { Popover, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CalendarIcon, ShoppingBag, Wallet } from "lucide-react";
+import { CalendarIcon, Loader2, ShoppingBag, Wallet } from "lucide-react";
 import { useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
@@ -365,7 +365,10 @@ export const PedidoForm = ({ pedido, isPending, onSubmit }: Props) => {
                         className="gradient-primary text-primary-foreground"
                         disabled={isPending}
                     >
-                        Guardar Cambios
+                        {isPending
+                            ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Guardando...</>
+                            : 'Guardar Cambios'
+                        }
                     </Button>
                 </div>
             </form>

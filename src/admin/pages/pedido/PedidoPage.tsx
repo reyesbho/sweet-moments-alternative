@@ -8,7 +8,7 @@ import type { Pedido } from "@/interfaces/pedidos-response";
 const PedidoPage = () => {
   const navigate = useNavigate();
   const {id} = useParams();
-  const {data: pedido, isPending, mutation} = usePedido(id || '');
+  const {data: pedido, mutation} = usePedido(id || '');
   const title = (id === 'new' ? 'Registrar nuevo pedido':'Actualiza pedido');
   const subTitle = (id === 'new' ? 'Aqui puedes registrar un nuevo pedido':'Aqui puedes actualizar tu pedido');
   const handleSubmit = async (pedidoLike: Partial<Pedido>) => {
@@ -33,7 +33,7 @@ const PedidoPage = () => {
     <div className="space-y-6 animate-fade-in">
       <CustomJumbotron title={title} subtitle={subTitle} ></CustomJumbotron>
       <PedidoForm
-        isPending={isPending}
+        isPending={mutation.isPending}
         onSubmit={handleSubmit}
         pedido={pedido}
       ></PedidoForm>
