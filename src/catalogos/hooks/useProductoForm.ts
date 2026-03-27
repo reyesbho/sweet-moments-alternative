@@ -57,9 +57,16 @@ export const useProductoForm = ({producto, onSubmit}:Props) => {
   }
 
   const handleSubmitNewSize = (size: Size) => {
-    const newSizes = [...sizesWatch, size];
+    const isEditing = !!productoFormState.editingSize;
+    const newSizes = isEditing
+      ? sizesWatch.map(s => s.size === size.size ? size : s)
+      : [...sizesWatch, size];
     form.setValue("sizes", newSizes);
     dispatch({type: 'CLOSE_SIZE_MODAL'});
+  }
+
+  const handleEditSize = (size: Size) => {
+    dispatch({ type: 'OPEN_SIZE_MODAL_EDIT', payload: size });
   }
 
   const handleSelectCategory = (category: Category) => {
@@ -72,12 +79,14 @@ export const useProductoForm = ({producto, onSubmit}:Props) => {
     productoFormState,
     sizesWatch,
     categoryWatch,
+    isCategoryPending: mutationCatetory.isPending,
 
     dispatch,
-    handleSelectCategory, 
-    handleSubmitNewSize, 
-    handleSubmitedNewCatery, 
-    handleFileChange, 
+    handleSelectCategory,
+    handleEditSize,
+    handleSubmitNewSize,
+    handleSubmitedNewCatery,
+    handleFileChange,
     handleSubmitLocal,
     form
 }

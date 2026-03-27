@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import type { Producto } from "@/interfaces/producto"
-import { Package, Upload } from "lucide-react"
+import { Loader2, Package, Upload } from "lucide-react"
 import { Controller } from "react-hook-form"
 import { useNavigate } from "react-router"
 
@@ -30,9 +30,11 @@ export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
     categories,
     handleSubmitLocal,
     productoFormState,
+    isCategoryPending,
     handleFileChange,
     handleSubmitedNewCatery,
     handleSubmitNewSize,
+    handleEditSize,
     handleSelectCategory,
     form: { handleSubmit, register, formState: { errors }, control }
   } = useProductoForm({ producto, onSubmit });
@@ -114,7 +116,7 @@ export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
               <Button type="button" onClick={() => dispatch({ type: "OPEN_SIZE_MODAL" })}>+ Agregar tamaño y precio</Button>
               <div className="flex flex-row gap-3 flex-wrap">
                 {sizesWatch.length > 0 && sizesWatch.map(size => (
-                  <SizeBadge key={size.size} size={size} ></SizeBadge>
+                  <SizeBadge key={size.size} size={size} onSelected={handleEditSize} ></SizeBadge>
                 ))}
               </div>
             </div>
@@ -170,7 +172,10 @@ export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
             Cancelar
           </Button>
           <Button disabled={isPending} type="submit" className="gradient-primary text-primary-foreground">
-            Guardar Cambios
+            {isPending
+              ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Guardando...</>
+              : 'Guardar Cambios'
+            }
           </Button>
         </div>
       </form>
@@ -179,12 +184,14 @@ export const ProductoForm = ({ producto, isPending, onSubmit }: Props) => {
         onOpenChange={() => dispatch({ type: 'CLOSE_CATEGORY_MODAL' })}
         existingCategories={categories || []}
         onCategoryCreated={handleSubmitedNewCatery}
+        isPending={isCategoryPending}
       />
       <NewSizeModal
         open={productoFormState.showNewSizeModal}
         onOpenChange={() => dispatch({ type: 'CLOSE_SIZE_MODAL' })}
         existingSizes={sizesWatch}
         onSizeAdded={handleSubmitNewSize}
+        editingSize={productoFormState.editingSize}
       >
       </NewSizeModal>
     </>

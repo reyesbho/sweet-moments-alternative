@@ -34,7 +34,7 @@ const ProductoCatalogo = () => {
       <div className=' flex flex-col items-center'>
         <ProductoForm
           producto={producto}
-          isPending={isPending}
+          isPending={mutation.isPending}
           onSubmit={handleSubmit}
         ></ProductoForm>
       </div>

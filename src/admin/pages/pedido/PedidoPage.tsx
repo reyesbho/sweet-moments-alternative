@@ -33,7 +33,7 @@ const PedidoPage = () => {
     <div className="space-y-6 animate-fade-in">
       <CustomJumbotron title={title} subtitle={subTitle} ></CustomJumbotron>
       <PedidoForm
-        isPending={isPending}
+        isPending={mutation.isPending}
         onSubmit={handleSubmit}
         pedido={pedido}
       ></PedidoForm>

@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { FolderPlus } from 'lucide-react';
+import { FolderPlus, Loader2 } from 'lucide-react';
 import type { Category } from '@/interfaces/producto';
 
 interface NewCategoryModalProps {
@@ -18,6 +18,7 @@ interface NewCategoryModalProps {
   onOpenChange: () => void;
   onCategoryCreated: (categoryName: Partial<Category>) => void;
   existingCategories: Category[];
+  isPending?: boolean;
 }
 
 export function NewCategoryModal({
@@ -25,6 +26,7 @@ export function NewCategoryModal({
   onOpenChange,
   onCategoryCreated,
   existingCategories,
+  isPending = false,
 }: NewCategoryModalProps) {
   const [error, setError] = useState('');
   const categoryRef = useRef<HTMLInputElement>(null);
@@ -94,8 +96,11 @@ export function NewCategoryModal({
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancelar
             </Button>
-            <Button type="submit">
-              Agregar categoría
+            <Button type="submit" disabled={isPending}>
+              {isPending
+                ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Guardando...</>
+                : 'Agregar categoría'
+              }
             </Button>
           </DialogFooter>
         </form>

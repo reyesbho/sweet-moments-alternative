@@ -1,7 +1,10 @@
+import type { Size } from '@/interfaces/producto';
+
 type TaskState = {
     selectedImage?: File,
     showNewCategoryModal: boolean,
-    showNewSizeModal: boolean
+    showNewSizeModal: boolean,
+    editingSize: Size | null,
 }
 
 type ActionType = {
@@ -10,6 +13,7 @@ type ActionType = {
     CLOSE_CATEGORY_MODAL:'CLOSE_CATEGORY_MODAL',
     OPEN_SIZE_MODAL:'OPEN_SIZE_MODAL',
     CLOSE_SIZE_MODAL:'CLOSE_SIZE_MODAL',
+    OPEN_SIZE_MODAL_EDIT:'OPEN_SIZE_MODAL_EDIT',
 }
 
 type TaskAction =
@@ -17,13 +21,15 @@ type TaskAction =
   | { type:ActionType['OPEN_CATEGORY_MODAL'] }
   | { type:ActionType['CLOSE_CATEGORY_MODAL'] }
   | { type:ActionType['OPEN_SIZE_MODAL'] }
-  | { type:ActionType['CLOSE_SIZE_MODAL'] };
+  | { type:ActionType['CLOSE_SIZE_MODAL'] }
+  | { type:ActionType['OPEN_SIZE_MODAL_EDIT']; payload: Size };
 
   export const getTaskProductoFormInitialState = (): TaskState => {
     return {
         selectedImage: undefined,
         showNewCategoryModal: false,
-        showNewSizeModal:false
+        showNewSizeModal: false,
+        editingSize: null,
     }
   }
 
@@ -40,10 +46,13 @@ type TaskAction =
       return { ...state, showNewCategoryModal: false };
 
     case 'OPEN_SIZE_MODAL':
-      return { ...state, showNewSizeModal: true };
+      return { ...state, showNewSizeModal: true, editingSize: null };
+
+    case 'OPEN_SIZE_MODAL_EDIT':
+      return { ...state, showNewSizeModal: true, editingSize: action.payload };
 
     case 'CLOSE_SIZE_MODAL':
-      return { ...state, showNewSizeModal: false };
+      return { ...state, showNewSizeModal: false, editingSize: null };
 
     default:
       return state;

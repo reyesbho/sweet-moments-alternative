@@ -12,9 +12,12 @@ interface Props {
     onOpenChange: (open: boolean) => void;
     onSizeAdded: (size: Size) => void;
     existingSizes: Size[];
+    editingSize?: Size | null;
 }
 
-export const NewSizeModal = ({ open = true, onOpenChange, onSizeAdded, existingSizes }: Props) => {
+export const NewSizeModal = ({ open = true, onOpenChange, onSizeAdded, existingSizes, editingSize }: Props) => {
+    const isEditing = !!editingSize;
+
     const availableSizes = useMemo(() => {
         const usedSizes = new Set(existingSizes.map(s => s.size));
         return Sizes.filter(size => !usedSizes.has(size))
@@ -28,6 +31,11 @@ export const NewSizeModal = ({ open = true, onOpenChange, onSizeAdded, existingS
     })
 
     useEffect(() => {
+        if (isEditing && editingSize) {
+            setValue('size', editingSize.size);
+            setValue('price', editingSize.price);
+            return;
+        }
         if (availableSizes.length === 0) return;
 
         const defaultSize = availableSizes.includes('Por defecto')
@@ -35,7 +43,8 @@ export const NewSizeModal = ({ open = true, onOpenChange, onSizeAdded, existingS
             : availableSizes[0];
 
         setValue('size', defaultSize);
-    }, [availableSizes, setValue]);
+        setValue('price', 0);
+    }, [availableSizes, setValue, editingSize, isEditing]);
 
 
     const handleSubmitLocal = (size: Size) => {
@@ -53,8 +62,10 @@ export const NewSizeModal = ({ open = true, onOpenChange, onSizeAdded, existingS
         <Dialog open={open} onOpenChange={handleClose}>
             <DialogContent>
                 <DialogHeader className="flex items-center ">
-                    <DialogTitle>Agregar tamaño y precio</DialogTitle>
-                    <DialogDescription>Agregar tamaño disponible y precio</DialogDescription>
+                    <DialogTitle>{isEditing ? 'Editar precio' : 'Agregar tamaño y precio'}</DialogTitle>
+                    <DialogDescription>
+                        {isEditing ? `Actualiza el precio para el tamaño "${editingSize?.size}"` : 'Agregar tamaño disponible y precio'}
+                    </DialogDescription>
                 </DialogHeader>
                 <form className="space-y-4" onSubmit={(handleSubmit(handleSubmitLocal))}>
                     <div className="space-y-2">
@@ -66,14 +77,17 @@ export const NewSizeModal = ({ open = true, onOpenChange, onSizeAdded, existingS
                                 <Select
                                     value={field.value}
                                     onValueChange={field.onChange}
+                                    disabled={isEditing}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder='Seleccionar un tamaño'></SelectValue>
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {availableSizes && availableSizes.map(size => (
-                                            <SelectItem key={size} value={size}>{size}</SelectItem>
-                                        ))
+                                        {isEditing && editingSize
+                                            ? <SelectItem value={editingSize.size}>{editingSize.size}</SelectItem>
+                                            : availableSizes.map(size => (
+                                                <SelectItem key={size} value={size}>{size}</SelectItem>
+                                            ))
                                         }
                                     </SelectContent>
                                 </Select>
@@ -86,11 +100,11 @@ export const NewSizeModal = ({ open = true, onOpenChange, onSizeAdded, existingS
                     <div className="space-y-2">
                         <Label htmlFor="price">Precio</Label>
                         <Input
-                            id="size-name"
-                            placeholder="Tamaño"
+                            id="size-price"
+                            placeholder="Precio"
                             type="number"
-                            {...register('price', { required: true, min: 1, valueAsNumber:true })}
-                        ></Input>
+                            {...register('price', { required: true, min: 1, valueAsNumber: true })}
+                        />
                         {errors.price && <p className="text-sm text-destructive">El precio debe ser mayor a 0</p>}
                     </div>
                     <DialogFooter>
@@ -98,7 +112,7 @@ export const NewSizeModal = ({ open = true, onOpenChange, onSizeAdded, existingS
                             Cancelar
                         </Button>
                         <Button type="submit">
-                            Agregar
+                            {isEditing ? 'Guardar' : 'Agregar'}
                         </Button>
                     </DialogFooter>
                 </form>
