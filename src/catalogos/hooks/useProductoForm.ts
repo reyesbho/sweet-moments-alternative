@@ -32,14 +32,12 @@ export const useProductoForm = ({producto, onSubmit}:Props) => {
       form.setError('sizes', { message: 'Se requere minimo un tamaño y precio' })
       return;
     };
-    console.log(productoLike)
     onSubmit(productoLike);
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    console.log(files[0])
     dispatch({type:'SET_IMAGE', payload: files[0]})
     form.setValue('file', files[0]);
   }
