@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CustomLogo } from "@/components/custom/CustomLogo"
-import {  useNavigate } from "react-router"
+import { Link, useNavigate } from "react-router"
 import { useState, type FormEvent } from "react"
 import { toast } from "sonner"
 import { useAuthStore } from "@/auth/store/auth.store"
@@ -75,7 +75,7 @@ export const LoginPage = () => {
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
-        Haciendo click, estas de acuerdo con <a href="#">terminos y condiciones</a> y <a href="#">politicas de uso</a>.
+        Haciendo click, estas de acuerdo con <a href="#">terminos y condiciones</a> y <Link to="/privacy-policy">politicas de privacidad</Link>.
       </div>
     </div>
   )

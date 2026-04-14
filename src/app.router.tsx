@@ -12,6 +12,7 @@ import { LoginPage } from "./auth/pages/login/LoginPage";
 import { RegisterPage } from "./auth/pages/register/RegisterPage";
 import { AdminRoute, NotAuthenticatedRoutes } from "./components/custom/routes/ProtectedRoutes";
 import { PedidoDetail } from "./admin/pages/pedido/PedidoDetail";
+import { PrivacyPolicyPage } from "./public/pages/privacy/PrivacyPolicyPage";
 
 const CatalogosLayout = lazy(() => import("./catalogos/layouts/CatalogosLayout"));
 
@@ -70,6 +71,10 @@ export const appRouter = createBrowserRouter([
                 element: <ProductoCatalogo></ProductoCatalogo>
             }
         ]
+    },
+    {
+        path: '/privacy-policy',
+        element: <PrivacyPolicyPage />
     },
     {
         path: '*',
